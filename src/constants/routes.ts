@@ -1,0 +1,15 @@
+export const ROUTES = {
+  SPLASH:       '/(auth)/',
+  PROFILE:      '/(auth)/profile',
+  TASTE_QUIZ:   '/(auth)/taste-quiz',
+  ADVENTURE:    '/(auth)/adventure',
+  HOME:         '/(tabs)/',
+  PLAN:         '/(tabs)/plan',
+  SHOP:         '/(tabs)/shop',
+  EXPLORE:      '/(tabs)/explore',
+  TAB_PROFILE:  '/(tabs)/profile',
+  RECIPE:       (id: string) => `/recipe/${id}` as const,
+  COOK:         (id: string) => `/cook/${id}` as const,
+  ADVENTURE_MODE: (cuisine: string) => `/adventure/${cuisine}` as const,
+  UNLOCK:       (character: string) => `/unlock/${character}` as const,
+} as const
