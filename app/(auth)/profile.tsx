@@ -1,5 +1,11 @@
-// S2 — Child Profile Setup
+// S2 — Child Profile Setup (merged with S4 Adventure Level)
 // Figma: P01-S2 | Auth required: Yes
+//
+// Mandatory fields: child name, child age, character pair.
+// Optional fields:  allergies, adventure level, home cuisine.
+//
+// Layout: single scroll, sections clearly labelled "Required" vs "Optional".
+
 import { useState } from 'react'
 import {
   ScrollView, View, Text, StyleSheet, Alert,
@@ -7,31 +13,35 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import {
-  collection, doc, setDoc, serverTimestamp, writeBatch,
+  collection, doc, serverTimestamp, writeBatch,
 } from 'firebase/firestore'
 import { db } from '@/services/firebase'
 import { useAuthStore } from '@/store/auth.store'
 import { useCharacterStore } from '@/store/character.store'
 import { colors, spacing, radius, typography } from '@/constants/tokens'
 import { CHARACTER_PAIR_ORDER } from '@/constants/characters'
-import { CharacterPairId } from '@/types/character'
+import { CUISINES } from '@/constants/cuisines'
+import { CharacterPairId, CuisineId } from '@/types/character'
 import { Allergy } from '@/types/child'
-import { ProgressDots } from '@/components/ui/ProgressDots'
 import { PrimaryButton } from '@/components/ui/PrimaryButton'
+import { Toggle } from '@/components/ui/Toggle'
 import { AllergyChip } from '@/components/ui/AllergyChip'
 import { ChildCard } from '@/components/profile/ChildCard'
 import { AddChildField } from '@/components/profile/AddChildField'
 import { CharacterPickerCard } from '@/components/character/CharacterPickerCard'
+import {
+  AdventureLevelSelector, AdventureLevel,
+} from '@/components/profile/AdventureLevelSelector'
+import { CuisinePickerChip } from '@/components/profile/CuisinePickerChip'
 
 const ALLERGIES: Allergy[] = [
   'nuts', 'dairy', 'gluten', 'eggs', 'soy', 'shellfish', 'fish', 'sesame',
 ]
 
 interface ChildDraft {
-  id:        string
-  name:      string
-  age:       number
-  allergies: Allergy[]
+  id:   string
+  name: string
+  age:  number
 }
 
 export default function ProfileSetupScreen() {
@@ -39,35 +49,43 @@ export default function ProfileSetupScreen() {
   const { user } = useAuthStore()
   const { setActivePairId, setUnlockedPairs } = useCharacterStore()
 
-  const [children, setChildren]             = useState<ChildDraft[]>([])
-  const [selectedAllergies, setAllergies]   = useState<Allergy[]>([])
-  const [selectedPair, setSelectedPair]     = useState<CharacterPairId>('marco-lily')
-  const [saving, setSaving]                 = useState(false)
+  // ── Required ─────────────────────────────────────────────────────────────────
+  const [children, setChildren]         = useState<ChildDraft[]>([])
+  const [selectedPair, setSelectedPair] = useState<CharacterPairId>('marco-lily')
 
-  // ── Children ────────────────────────────────────────────────────────────────
+  // ── Optional ────────────────────────────────────────────────────────────────
+  const [noAllergies, setNoAllergies]         = useState(false)
+  const [allergies, setAllergiesState]        = useState<Allergy[]>([])
+  const [adventureLevel, setAdventureLevel]   = useState<AdventureLevel>('curious')
+  const [homeCuisine, setHomeCuisine]         = useState<CuisineId | ''>('')
+
+  const [saving, setSaving] = useState(false)
+
+  // ── Handlers ────────────────────────────────────────────────────────────────
 
   function addChild(name: string, age: number) {
-    setChildren((prev) => [
-      ...prev,
-      { id: `${Date.now()}`, name, age, allergies: selectedAllergies },
-    ])
+    setChildren((prev) => [...prev, { id: `${Date.now()}`, name, age }])
   }
 
   function removeChild(id: string) {
     setChildren((prev) => prev.filter((c) => c.id !== id))
   }
 
-  function toggleAllergy(allergen: Allergy) {
-    setAllergies((prev) =>
-      prev.includes(allergen)
-        ? prev.filter((a) => a !== allergen)
-        : [...prev, allergen],
+  function toggleAllergy(a: Allergy) {
+    setNoAllergies(false)
+    setAllergiesState((prev) =>
+      prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a],
     )
   }
 
-  // ── Save & navigate ──────────────────────────────────────────────────────────
+  function handleNoAllergiesToggle(next: boolean) {
+    setNoAllergies(next)
+    if (next) setAllergiesState([])
+  }
 
-  async function handleNext() {
+  // ── Save ────────────────────────────────────────────────────────────────────
+
+  async function handleContinue() {
     if (!user) return
     if (children.length === 0) {
       Alert.alert('Add a child', 'Please add at least one child to continue.')
@@ -78,19 +96,28 @@ export default function ProfileSetupScreen() {
     try {
       const batch = writeBatch(db)
 
-      // Write each child document
+      // Children — one document each
       for (const child of children) {
         const childRef = doc(collection(db, 'users', user.uid, 'children'))
         batch.set(childRef, {
           childId:   childRef.id,
           name:      child.name,
           age:       child.age,
-          allergies: selectedAllergies,   // shared across all children for now
+          allergies: allergies,
           createdAt: serverTimestamp(),
         })
       }
 
-      // Write unlocks — starter pair chosen here
+      // User doc — adventure level + home cuisine
+      const userRef = doc(db, 'users', user.uid)
+      batch.update(userRef, {
+        activeCharacter: selectedPair,
+        adventureLevel:  adventureLevel,
+        homeCuisine:     homeCuisine,
+        updatedAt:       serverTimestamp(),
+      })
+
+      // Unlocks — starter pair only
       const unlocksRef = doc(db, 'users', user.uid, 'unlocks', user.uid)
       batch.set(unlocksRef, {
         userId:        user.uid,
@@ -106,7 +133,6 @@ export default function ProfileSetupScreen() {
 
       await batch.commit()
 
-      // Update local stores
       setActivePairId(selectedPair)
       setUnlockedPairs([selectedPair])
 
@@ -119,6 +145,8 @@ export default function ProfileSetupScreen() {
     }
   }
 
+  // ── Render ──────────────────────────────────────────────────────────────────
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView
@@ -127,17 +155,16 @@ export default function ProfileSetupScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* ── Header ── */}
+        {/* ── Header ───────────────────────────────────────────────────────── */}
         <View style={styles.header}>
-          <Text style={styles.heading}>Who are we cooking for?</Text>
+          <Text style={styles.heading}>Tell us about your child</Text>
           <Text style={styles.sub}>
-            Add the children you're cooking for. Allergies apply to all children.
+            The more we know, the better the meal suggestions. Most fields are optional.
           </Text>
         </View>
 
-        {/* ── Children ── */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Children</Text>
+        {/* ── Required: Children ───────────────────────────────────────────── */}
+        <Section title="Children" required>
           <View style={styles.childList}>
             {children.map((child) => (
               <ChildCard
@@ -149,33 +176,11 @@ export default function ProfileSetupScreen() {
             ))}
             <AddChildField onAdd={addChild} />
           </View>
-        </View>
+        </Section>
 
-        {/* ── Allergies ── */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Allergies & intolerances</Text>
-          <Text style={styles.sectionHint}>
-            Recipes containing these will never be suggested. Safety first.
-          </Text>
-          <View style={styles.chipWrap}>
-            {ALLERGIES.map((allergen) => (
-              <AllergyChip
-                key={allergen}
-                allergen={allergen}
-                selected={selectedAllergies.includes(allergen)}
-                onToggle={toggleAllergy}
-              />
-            ))}
-          </View>
-          {selectedAllergies.length === 0 && (
-            <Text style={styles.noAllergies}>No allergies — tap any that apply</Text>
-          )}
-        </View>
-
-        {/* ── Character picker ── */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Choose your cooking companions</Text>
-          <Text style={styles.sectionHint}>
+        {/* ── Required: Character pair ─────────────────────────────────────── */}
+        <Section title="Cooking companions" required>
+          <Text style={styles.hint}>
             They'll guide you through every recipe. You can unlock more later.
           </Text>
           <View style={styles.characterList}>
@@ -188,12 +193,66 @@ export default function ProfileSetupScreen() {
               />
             ))}
           </View>
-        </View>
+        </Section>
 
-        {/* ── CTA ── */}
+        {/* ── Optional: Allergies ──────────────────────────────────────────── */}
+        <Section title="Allergies & intolerances">
+          <Text style={styles.hint}>
+            Recipes containing these will never be suggested. Safety first.
+          </Text>
+          <Toggle
+            label="No known allergies"
+            value={noAllergies}
+            onChange={handleNoAllergiesToggle}
+          />
+          {!noAllergies && (
+            <View style={styles.chipWrap}>
+              {ALLERGIES.map((a) => (
+                <AllergyChip
+                  key={a}
+                  allergen={a}
+                  selected={allergies.includes(a)}
+                  onToggle={toggleAllergy}
+                />
+              ))}
+            </View>
+          )}
+        </Section>
+
+        {/* ── Optional: Adventure level ────────────────────────────────────── */}
+        <Section title="Adventure level">
+          <Text style={styles.hint}>
+            How bold should the suggestions be? You can change this any time.
+          </Text>
+          <AdventureLevelSelector
+            value={adventureLevel}
+            onChange={setAdventureLevel}
+          />
+        </Section>
+
+        {/* ── Optional: Home cuisine ───────────────────────────────────────── */}
+        <Section title="Home cuisine">
+          <Text style={styles.hint}>
+            The cuisine your family cooks most at home — your "familiar" anchor.
+          </Text>
+          <View style={styles.chipWrap}>
+            {Object.values(CUISINES).map((cuisine) => (
+              <CuisinePickerChip
+                key={cuisine.cuisineId}
+                cuisine={cuisine}
+                selected={homeCuisine === cuisine.cuisineId}
+                onPress={(id) =>
+                  setHomeCuisine((prev) => (prev === id ? '' : (id as CuisineId)))
+                }
+              />
+            ))}
+          </View>
+        </Section>
+
+        {/* ── CTA ──────────────────────────────────────────────────────────── */}
         <PrimaryButton
-          label="Next"
-          onPress={handleNext}
+          label="Continue"
+          onPress={handleContinue}
           loading={saving}
           disabled={children.length === 0}
           style={styles.cta}
@@ -202,15 +261,35 @@ export default function ProfileSetupScreen() {
         {children.length === 0 && (
           <Text style={styles.ctaHint}>Add at least one child to continue</Text>
         )}
-
-        {/* ── Progress dots ── */}
-        <View style={styles.dots}>
-          <ProgressDots total={3} current={1} />
-        </View>
       </ScrollView>
     </SafeAreaView>
   )
 }
+
+// ── Section wrapper ────────────────────────────────────────────────────────────
+
+function Section({
+  title, required, children,
+}: {
+  title:     string
+  required?: boolean
+  children:  React.ReactNode
+}) {
+  return (
+    <View style={styles.section}>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {required
+          ? <Text style={styles.required}>Required</Text>
+          : <Text style={styles.optional}>Optional</Text>
+        }
+      </View>
+      {children}
+    </View>
+  )
+}
+
+// ── Styles ─────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   safe:   { flex: 1, backgroundColor: colors.linen },
@@ -221,7 +300,6 @@ const styles = StyleSheet.create({
     gap: spacing[6],
   },
 
-  // ── Header ──────────────────────────────────────────────────────────────────
   header: { paddingTop: spacing[6] },
   heading: {
     ...typography.display,
@@ -233,45 +311,46 @@ const styles = StyleSheet.create({
     color: colors.gray[600],
   },
 
-  // ── Sections ────────────────────────────────────────────────────────────────
-  section:      { gap: spacing[3] },
-  sectionLabel: {
+  section: { gap: spacing[3] },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  sectionTitle: {
     ...typography.h2,
     color: colors.gray[900],
   },
-  sectionHint: {
+  required: {
+    ...typography.label,
+    color: colors.coral[400],
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  optional: {
+    ...typography.label,
+    color: colors.gray[400],
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  hint: {
     ...typography.bodySm,
     color: colors.gray[600],
-    marginTop: -spacing[1],
   },
 
-  // ── Children ────────────────────────────────────────────────────────────────
-  childList: { gap: spacing[2] },
-
-  // ── Allergies ───────────────────────────────────────────────────────────────
+  childList:     { gap: spacing[2] },
+  characterList: { gap: spacing[2] },
   chipWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing[2],
   },
-  noAllergies: {
-    ...typography.bodySm,
-    color: colors.gray[400],
-    fontStyle: 'italic',
-  },
 
-  // ── Characters ──────────────────────────────────────────────────────────────
-  characterList: { gap: spacing[2] },
-
-  // ── CTA ─────────────────────────────────────────────────────────────────────
-  cta:     { marginTop: spacing[2] },
+  cta:     { marginTop: spacing[4] },
   ctaHint: {
     ...typography.bodySm,
     color: colors.gray[400],
     textAlign: 'center',
     marginTop: -spacing[2],
   },
-
-  // ── Dots ────────────────────────────────────────────────────────────────────
-  dots: { paddingBottom: spacing[4] },
 })

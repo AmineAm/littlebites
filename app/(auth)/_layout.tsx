@@ -6,7 +6,6 @@ export default function AuthLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="profile" />
       <Stack.Screen name="taste-quiz" />
-      <Stack.Screen name="adventure" />
     </Stack>
   )
 }
