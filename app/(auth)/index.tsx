@@ -10,7 +10,6 @@ import { LinearGradient } from 'expo-linear-gradient'
 import * as Google from 'expo-auth-session/providers/google'
 import * as WebBrowser from 'expo-web-browser'
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
-import { useRouter } from 'expo-router'
 import { auth } from '@/services/firebase'
 import { signUpWithEmail, signInWithEmail } from '@/services/auth'
 import { colors, spacing, radius, typography } from '@/constants/tokens'
@@ -19,34 +18,73 @@ import { PrimaryButton } from '@/components/ui/PrimaryButton'
 
 WebBrowser.maybeCompleteAuthSession()
 
-type EmailMode = 'hidden' | 'signup' | 'login'
+// ── GoogleAuthButton ──────────────────────────────────────────────────────────
+// Isolated in its own component so the hook is only called when client IDs exist.
+// expo-auth-session requires platform-specific client IDs — without them the
+// hook throws an invariant error. Extract it here so we can conditionally mount.
 
-export default function SplashScreen() {
-  const router = useRouter()
+interface GoogleAuthButtonProps {
+  onAuthStart: () => void
+  onAuthEnd:   () => void
+}
 
-  // ── Google OAuth ─────────────────────────────────────────────────────────
-  const [_request, response, promptAsync] = Google.useAuthRequest({
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+function GoogleAuthButton({ onAuthStart, onAuthEnd }: GoogleAuthButtonProps) {
+  const clientConfig = Platform.select({
+    android: {
+      androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+      webClientId:     process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    },
+    ios: {
+      iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+      webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    },
+    default: {
+      webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    },
   })
 
-  const [googleLoading, setGoogleLoading] = useState(false)
+  const [_req, response, promptAsync] = Google.useAuthRequest(clientConfig)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (response?.type === 'success') {
       const idToken = response.params.id_token
       if (!idToken) return
-      setGoogleLoading(true)
+      setLoading(true)
+      onAuthStart()
       const credential = GoogleAuthProvider.credential(idToken)
-      signInWithCredential(auth, credential)
-        .catch((e) => {
-          Alert.alert('Sign in failed', e.message)
-          setGoogleLoading(false)
-        })
-      // Auth state listener in _layout.tsx handles the redirect
+      signInWithCredential(auth, credential).catch((e) => {
+        Alert.alert('Sign in failed', e.message)
+        setLoading(false)
+        onAuthEnd()
+      })
     }
   }, [response])
 
-  // ── Email form ───────────────────────────────────────────────────────────
+  return (
+    <SocialLoginButton
+      variant="google"
+      loading={loading}
+      onPress={() => {
+        setLoading(true)
+        promptAsync().finally(() => setLoading(false))
+      }}
+    />
+  )
+}
+
+// Check if we have the required client ID for this platform
+function canUseGoogleAuth(): boolean {
+  if (Platform.OS === 'android') return !!process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID
+  if (Platform.OS === 'ios')     return !!process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID
+  return !!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
+}
+
+// ── S1 Main Screen ────────────────────────────────────────────────────────────
+
+type EmailMode = 'hidden' | 'signup' | 'login'
+
+export default function SplashScreen() {
   const [emailMode, setEmailMode]       = useState<EmailMode>('hidden')
   const [email, setEmail]               = useState('')
   const [password, setPassword]         = useState('')
@@ -61,7 +99,6 @@ export default function SplashScreen() {
       } else {
         await signInWithEmail(email.trim(), password)
       }
-      // Auth state listener in _layout.tsx handles the redirect
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Something went wrong'
       Alert.alert('Error', msg)
@@ -83,9 +120,8 @@ export default function SplashScreen() {
         style={styles.hero}
       >
         <SafeAreaView edges={['top']} style={styles.heroInner}>
-          {/* Character silhouettes placeholder — assets added when delivered */}
           <View style={styles.silhouetteRow}>
-            {['marco-lily', 'mei-theo', 'nour-boo', 'elsa-kit-finn'].map((id) => (
+            {['1', '2', '3', '4'].map((id) => (
               <View key={id} style={styles.silhouettePlaceholder} />
             ))}
           </View>
@@ -100,7 +136,7 @@ export default function SplashScreen() {
       {/* ── Auth card — bottom 60% ──────────────────────────────────────── */}
       <View style={styles.card}>
         <Text style={styles.cardHeading}>
-          {emailMode === 'login' ? 'Welcome back' : 'Let's get cooking'}
+          {emailMode === 'login' ? 'Welcome back' : "Let's get cooking"}
         </Text>
         <Text style={styles.cardSub}>
           {emailMode === 'login'
@@ -108,7 +144,7 @@ export default function SplashScreen() {
             : 'Create a free account to start your food adventure'}
         </Text>
 
-        {/* ── Email form (shown inline when tapped) ── */}
+        {/* ── Email form ── */}
         {emailMode !== 'hidden' && (
           <View style={styles.emailForm}>
             <TextInput
@@ -150,14 +186,24 @@ export default function SplashScreen() {
         {/* ── Social + email buttons ── */}
         {emailMode === 'hidden' && (
           <View style={styles.buttons}>
-            <SocialLoginButton
-              variant="google"
-              onPress={() => {
-                setGoogleLoading(true)
-                promptAsync().finally(() => setGoogleLoading(false))
-              }}
-              loading={googleLoading}
-            />
+            {canUseGoogleAuth()
+              ? (
+                <GoogleAuthButton
+                  onAuthStart={() => {}}
+                  onAuthEnd={() => {}}
+                />
+              )
+              : (
+                // Google not yet configured for this platform — show disabled button
+                <SocialLoginButton
+                  variant="google"
+                  onPress={() => Alert.alert(
+                    'Coming soon',
+                    'Google sign-in will be available in the next build.',
+                  )}
+                />
+              )
+            }
             <PrimaryButton
               label="Continue with email"
               onPress={() => setEmailMode('signup')}
@@ -185,99 +231,93 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.white },
 
-  // ── Hero ──────────────────────────────────────────────────────────────────
-  hero:        { flex: 0.4 },
-  heroInner:   { flex: 1, justifyContent: 'flex-end', paddingBottom: spacing[6] },
+  hero:      { flex: 0.4 },
+  heroInner: { flex: 1, justifyContent: 'flex-end', paddingBottom: spacing[6] },
 
   silhouetteRow: {
-    flexDirection:  'row',
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems:     'flex-end',
-    gap:            spacing[2],
+    alignItems: 'flex-end',
+    gap: spacing[2],
     paddingHorizontal: spacing[4],
-    marginBottom:   spacing[4],
+    marginBottom: spacing[4],
   },
   silhouettePlaceholder: {
-    width:           52,
-    height:          80,
-    borderRadius:    radius.md,
+    width: 52,
+    height: 80,
+    borderRadius: radius.md,
     backgroundColor: 'rgba(255,255,255,0.25)',
   },
 
   logoBlock: { alignItems: 'center', paddingHorizontal: spacing[6] },
   appName: {
     ...typography.display,
-    color:      colors.white,
-    textAlign:  'center',
-    textShadowColor:  'rgba(0,0,0,0.15)',
+    color: colors.white,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.15)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
   tagline: {
     ...typography.bodyLg,
-    color:      colors.white,
-    textAlign:  'center',
-    marginTop:  spacing[1],
-    opacity:    0.9,
+    color: colors.white,
+    textAlign: 'center',
+    marginTop: spacing[1],
+    opacity: 0.9,
   },
 
-  // ── Auth card ─────────────────────────────────────────────────────────────
   card: {
-    flex:               0.6,
-    backgroundColor:    colors.white,
-    borderTopLeftRadius:  radius.xl,
+    flex: 0.6,
+    backgroundColor: colors.white,
+    borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
-    paddingHorizontal:  spacing[6],
-    paddingTop:         spacing[6],
-    paddingBottom:      spacing[4],
+    paddingHorizontal: spacing[6],
+    paddingTop: spacing[6],
+    paddingBottom: spacing[4],
   },
   cardHeading: {
     ...typography.h1,
-    color:        colors.gray[900],
+    color: colors.gray[900],
     marginBottom: spacing[1],
   },
   cardSub: {
     ...typography.body,
-    color:        colors.gray[600],
+    color: colors.gray[600],
     marginBottom: spacing[6],
   },
 
-  // ── Buttons ───────────────────────────────────────────────────────────────
-  buttons: { gap: spacing[3] },
-
+  buttons:   { gap: spacing[3] },
   loginLink: {
     ...typography.body,
-    color:     colors.coral[400],
+    color: colors.coral[400],
     textAlign: 'center',
     marginTop: spacing[1],
   },
 
-  // ── Email form ────────────────────────────────────────────────────────────
   emailForm: { gap: spacing[3] },
   input: {
-    height:           52,
-    borderWidth:      1,
-    borderColor:      colors.gray[100],
-    borderRadius:     radius.md,
+    height: 52,
+    borderWidth: 1,
+    borderColor: colors.gray[100],
+    borderRadius: radius.md,
     paddingHorizontal: spacing[4],
     ...typography.bodyLg,
-    color:            colors.gray[900],
-    backgroundColor:  colors.linen,
+    color: colors.gray[900],
+    backgroundColor: colors.linen,
   },
   switchMode: {
     ...typography.body,
-    color:     colors.coral[400],
+    color: colors.coral[400],
     textAlign: 'center',
   },
 
-  // ── Footer ────────────────────────────────────────────────────────────────
   backRow:  { marginTop: spacing[4], alignItems: 'flex-start' },
   backLink: { ...typography.body, color: colors.gray[600] },
   legal: {
     ...typography.bodySm,
-    color:      colors.gray[400],
-    textAlign:  'center',
-    marginTop:  'auto',
+    color: colors.gray[400],
+    textAlign: 'center',
+    marginTop: 'auto',
     paddingTop: spacing[4],
   },
 })
