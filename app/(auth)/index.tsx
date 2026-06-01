@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import {
   View, Text, StyleSheet, KeyboardAvoidingView,
-  Platform, TextInput, Pressable, Alert,
+  Platform, TextInput, Pressable, Alert, ScrollView,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -134,7 +134,12 @@ export default function SplashScreen() {
       </LinearGradient>
 
       {/* ── Auth card — bottom 60% ──────────────────────────────────────── */}
-      <View style={styles.card}>
+      <ScrollView
+        style={styles.card}
+        contentContainerStyle={styles.cardContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.cardHeading}>
           {emailMode === 'login' ? 'Welcome back' : "Let's get cooking"}
         </Text>
@@ -156,14 +161,19 @@ export default function SplashScreen() {
               autoCorrect={false}
               value={email}
               onChangeText={setEmail}
+              returnKeyType="next"
+              textContentType="emailAddress"
             />
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder="Password (6+ characters)"
               placeholderTextColor={colors.gray[400]}
               secureTextEntry
               value={password}
               onChangeText={setPassword}
+              returnKeyType="go"
+              textContentType={emailMode === 'signup' ? 'newPassword' : 'password'}
+              onSubmitEditing={handleEmailSubmit}
             />
             <PrimaryButton
               label={emailMode === 'signup' ? 'Create account' : 'Sign in'}
@@ -223,7 +233,7 @@ export default function SplashScreen() {
         <Text style={styles.legal}>
           By continuing you agree to our Terms of Service and Privacy Policy.
         </Text>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   )
 }
@@ -271,6 +281,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
+  },
+  cardContent: {
+    flexGrow: 1,
     paddingHorizontal: spacing[6],
     paddingTop: spacing[6],
     paddingBottom: spacing[4],
