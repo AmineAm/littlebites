@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { scoreRecipe, rankRecipes } from './preference'
+import { scoreRecipe, rankRecipes, applyMealVerdict } from './preference'
 import { Recipe } from '@/types/recipe'
 import { ChildPreferences, Allergy } from '@/types/child'
 
@@ -133,5 +133,65 @@ describe('rankRecipes', () => {
   it('returns an empty list when everything is unsafe', () => {
     const unsafe = recipe({ allergens: ['dairy'] })
     expect(rankRecipes([unsafe], NO_PREFS, ['dairy'])).toEqual([])
+  })
+})
+
+describe('applyMealVerdict', () => {
+  const recipe = (over: Partial<Recipe> = {}) => ({
+    recipeId: 'r', title: 'R', cuisineId: 'thai',
+    ageRange: { min: 2, max: 12 }, prepMinutes: 20, difficulty: 'easy', servings: 2,
+    allergens: [], nutritionTags: [], ingredients: [], steps: [],
+    coreFlavours: [], textures: [], mainProteins: ['chicken'], mainVeg: ['broccoli'],
+    substitutions: {}, launchWave: 1, ...over,
+  }) as Recipe
+
+  describe('thumbs up', () => {
+    it('adds the meal\u2019s ingredients to liked', () => {
+      const next = applyMealVerdict(NO_PREFS, recipe(), true)
+      expect(next.liked).toEqual(expect.arrayContaining(['chicken', 'broccoli']))
+    })
+
+    it('records the cuisine as accepted', () => {
+      expect(applyMealVerdict(NO_PREFS, recipe(), true).cuisineHistory.thai).toBe('accepted')
+    })
+
+    it('overrides a previous dislike \u2014 eating it is strong evidence', () => {
+      const prev: ChildPreferences = { ...NO_PREFS, disliked: ['broccoli'] }
+      const next = applyMealVerdict(prev, recipe(), true)
+      expect(next.liked).toContain('broccoli')
+      expect(next.disliked).not.toContain('broccoli')
+    })
+  })
+
+  describe('thumbs down', () => {
+    it('records the cuisine as rejected', () => {
+      expect(applyMealVerdict(NO_PREFS, recipe(), false).cuisineHistory.thai).toBe('rejected')
+    })
+
+    it('marks previously unknown ingredients as disliked', () => {
+      const next = applyMealVerdict(NO_PREFS, recipe(), false)
+      expect(next.disliked).toEqual(expect.arrayContaining(['chicken', 'broccoli']))
+    })
+
+    // One bad curry should not cost a chicken-loving child their chicken.
+    it('does NOT demote an ingredient the child already likes', () => {
+      const prev: ChildPreferences = { ...NO_PREFS, liked: ['chicken'] }
+      const next = applyMealVerdict(prev, recipe(), false)
+      expect(next.liked).toContain('chicken')
+      expect(next.disliked).not.toContain('chicken')
+      expect(next.disliked).toContain('broccoli')
+    })
+  })
+
+  it('never records an ingredient twice', () => {
+    const prev: ChildPreferences = { ...NO_PREFS, liked: ['chicken'] }
+    const next = applyMealVerdict(prev, recipe(), true)
+    expect(new Set(next.liked).size).toBe(next.liked.length)
+  })
+
+  it('does not mutate the input', () => {
+    const prev: ChildPreferences = { liked: [], disliked: [], cuisineHistory: {} }
+    applyMealVerdict(prev, recipe(), true)
+    expect(prev.liked).toEqual([])
   })
 })

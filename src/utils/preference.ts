@@ -45,3 +45,44 @@ export function rankRecipes(
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score)
 }
+
+/**
+ * Applies the one-tap verdict recorded at the end of guided prep.
+ *
+ * The rule is deliberately asymmetric. A child eating something is strong
+ * evidence about that ingredient, so a thumbs-up overrides a previous dislike.
+ * A child refusing a composite dish is weak evidence about any single
+ * ingredient in it — so a thumbs-down never demotes something already liked.
+ * Without that asymmetry, one bad chicken curry costs a chicken-loving child
+ * their chicken, and every future chicken recipe is penalised.
+ *
+ * Cuisine history is recorded in both directions: refusing the dish IS direct
+ * evidence about the dish.
+ */
+export function applyMealVerdict(
+  prefs: ChildPreferences,
+  recipe: Recipe,
+  likedIt: boolean,
+): ChildPreferences {
+  const ingredients = [...recipe.mainProteins, ...recipe.mainVeg]
+
+  const liked = likedIt
+    ? [...new Set([...prefs.liked, ...ingredients])]
+    : prefs.liked
+
+  const disliked = likedIt
+    ? prefs.disliked.filter((id) => !ingredients.includes(id))
+    : [...new Set([
+        ...prefs.disliked,
+        ...ingredients.filter((id) => !prefs.liked.includes(id)),
+      ])]
+
+  return {
+    liked,
+    disliked,
+    cuisineHistory: {
+      ...prefs.cuisineHistory,
+      [recipe.cuisineId]: likedIt ? 'accepted' : 'rejected',
+    },
+  }
+}

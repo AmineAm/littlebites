@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ChildPreferences } from '@/types/child'
 import { Recipe } from '@/types/recipe'
+import { applyMealVerdict } from '@/utils/preference'
 
 interface PreferencesState extends ChildPreferences {
   /**
@@ -20,36 +21,18 @@ const EMPTY: ChildPreferences = {
   cuisineHistory: {},
 }
 
-function move(from: string[], to: string[], ids: string[]) {
-  return {
-    from: from.filter((id) => !ids.includes(id)),
-    to:   [...new Set([...to, ...ids])],
-  }
-}
-
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
       ...EMPTY,
 
+      // Delegates to the pure rule in utils so the asymmetry is testable.
       recordMealVerdict: (recipe, likedIt) =>
-        set((s) => {
-          // The signal attaches to what the meal was actually made of.
-          const ids = [...recipe.mainProteins, ...recipe.mainVeg]
-
-          const shifted = likedIt
-            ? move(s.disliked, s.liked, ids)
-            : move(s.liked, s.disliked, ids)
-
-          return {
-            liked:    likedIt ? shifted.to : shifted.from,
-            disliked: likedIt ? shifted.from : shifted.to,
-            cuisineHistory: {
-              ...s.cuisineHistory,
-              [recipe.cuisineId]: likedIt ? 'accepted' : 'rejected',
-            },
-          }
-        }),
+        set((s) => applyMealVerdict(
+          { liked: s.liked, disliked: s.disliked, cuisineHistory: s.cuisineHistory },
+          recipe,
+          likedIt,
+        )),
 
       reset: () => set({ ...EMPTY }),
     }),

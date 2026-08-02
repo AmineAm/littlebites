@@ -15,6 +15,8 @@ import { useProfileStore } from '@/store/profile.store'
 import { useCharacterStore } from '@/store/character.store'
 import { usePlannerStore } from '@/store/planner.store'
 import { deriveShoppingList } from '@/utils/shopping'
+import { rankRecipes } from '@/utils/preference'
+import { usePreferencesStore } from '@/store/preferences.store'
 import { getRecipe, filterRecipes } from '@/data/recipes'
 import { DAY_ORDER } from '@/types/planner'
 import type { CuisineId, CharacterPairId } from '@/types/character'
@@ -30,6 +32,10 @@ export default function TodayScreen() {
   const passport = useCharacterStore((s) => s.passport)
   const checked  = usePlannerStore((s) => s.checked[weekId] ?? [])
 
+  const liked          = usePreferencesStore((s) => s.liked)
+  const disliked       = usePreferencesStore((s) => s.disliked)
+  const cuisineHistory = usePreferencesStore((s) => s.cuisineHistory)
+
   const homeCuisineId: CuisineId = settings.homeCuisine ?? 'italian'
   const adventureCuisine = CUISINES[homeCuisineId]
 
@@ -39,13 +45,18 @@ export default function TodayScreen() {
     const planned = plan.days[todayKey]?.dinner
     if (planned) return { recipe: getRecipe(planned), planned: true }
 
-    const [suggestion] = filterRecipes({
+    // Nothing planned — rank what's safe and age-appropriate by taste.
+    const safe = filterRecipes({
       ageBand:   child?.ageBand,
       allergies: child?.allergies,
-      limit:     1,
     })
-    return { recipe: suggestion ?? null, planned: false }
-  }, [plan, child])
+    const ranked = rankRecipes(
+      safe,
+      { liked, disliked, cuisineHistory },
+      child?.allergies ?? [],
+    )
+    return { recipe: ranked[0]?.recipe ?? null, planned: false }
+  }, [plan, child, liked, disliked, cuisineHistory])
 
   const shoppingCount = useMemo(() => {
     const groups = deriveShoppingList(plan, plannedRecipes)
