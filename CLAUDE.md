@@ -4,6 +4,9 @@ This file is read by Claude Code at the start of every session.
 It is the single source of truth for all architectural decisions.
 Do not generate code that contradicts anything written here.
 
+**Architecture spec:** [littlebites#1](https://github.com/AmineAm/littlebites/issues/1) — the reasoning
+and trade-offs behind everything below.
+
 ---
 
 ## Project identity
@@ -11,21 +14,24 @@ Do not generate code that contradicts anything written here.
 **App name:** Little Bites, Big World
 **Codename:** LittleBites
 **Type:** Cross-platform mobile app (iOS + Android)
-**Stack:** React Native + Expo (managed workflow) + TypeScript + Firebase
+**Stack:** React Native + Expo (managed workflow) + TypeScript
 **Design system:** P01 — Contemporary World
-**Status:** Phase 3 — Active build
+**Status:** Phase 4 — Simplified architecture
+
+**There is no backend.** No accounts, no database, no network calls. Recipes ship
+in the bundle; everything the family creates lives on their device.
 
 ---
 
 ## What this app does
 
 A children's meal prep companion for parents. Core value:
-- Personalised recipe suggestions based on each child's food preferences
-- Weekly meal planner with auto-generated shopping list
+- Recipe suggestions matched to one child's age, allergies and tastes
+- Weekly meal planner with an auto-derived shopping list
 - Global cuisine exploration with culture story cards per recipe
 - Passport stamp reward system (kids collect stamps per country cooked)
-- Static illustrated character pairs that appear throughout the app
-- Character unlock system — users earn new character pairs through cooking milestones
+- Four illustrated character pairs that appear throughout the app
+- Character unlock system — new pairs earned through cooking milestones
 
 ---
 
@@ -39,10 +45,16 @@ A children's meal prep companion for parents. Core value:
 6. **All screens have `backgroundColor: colors.linen`** — not white, not transparent
 7. **Border radius always uses `radius` tokens** — never raw pixel values inline
 8. **All text uses `typography` tokens** — no raw fontSize/fontWeight inline
-9. **Images always use `<FastImage>`** from `react-native-fast-image` — never `<Image>`
-10. **All character assets come from `src/assets/characters/`** — never from a URL
+9. **Images always use `<Image>` from `expo-image`** — never `react-native`'s `Image`, never `FastImage`
+10. **All character assets come from `src/assets/`** — never from a URL
 11. **prefers-reduced-motion must be respected** — wrap all animations in the `useReducedMotion` hook
 12. **No calorie counts, no macro tracking, no weight references** — anywhere in the app
+13. **Never add a network call.** No `fetch`, no SDK, no remote config. The app works in aeroplane mode
+14. **Never write to storage from a screen.** All writes go through a store action — this is the seam
+    that makes cloud sync addable later
+15. **Minimum interactive target is 56px.** Parents tap this with wet hands
+16. **Pure logic imports nothing.** Functions in `src/utils/` must not import React, stores, services
+    or components. Screens call into them; they call nothing back
 
 ---
 
@@ -51,24 +63,30 @@ A children's meal prep companion for parents. Core value:
 ```
 expo: ~54.0.33
 react-native: 0.81.5
+react: 19.1.0
 typescript: ~5.9.2
 expo-router: ~6.0.23
-react-native-fast-image: ^8.6.3  (installed with --legacy-peer-deps for React 19 compat)
-zustand: ^5.0.13
-firebase: ^12.13.0
-nativewind: ^4.2.4  (Tailwind for React Native)
-tailwindcss: ^4.3.0
-expo-notifications: ~0.32.17
+expo-image: ~3.0.11              (replaces react-native-fast-image)
+expo-linear-gradient: ~15.0.8
 expo-haptics: ~15.0.8
-react-native-reanimated: ~4.1.1
+@react-native-async-storage/async-storage: 2.2.0
+zustand: ^5.0.13
+react-native-safe-area-context: ~5.6.0
+react-native-screens: ~4.16.0
 react-native-gesture-handler: ~2.28.0
-@shopify/flash-list: ^2.3.1  (replaces FlatList everywhere)
-expo-auth-session: ~7.0.11
-expo-web-browser: ~15.0.11
+vitest: ^3.x                     (dev — pure logic tests only)
 ```
 
-> Note: Project was initialised in 2026 with Expo 54 (not 51 as originally specced).
-> All architectural decisions in this file remain unchanged.
+**Deliberately absent.** Do not re-add without reopening the spec:
+`firebase`, `expo-auth-session`, `expo-web-browser`, `nativewind`, `tailwindcss`,
+`@shopify/flash-list`, `expo-notifications`, `react-native-fast-image`,
+`react-native-reanimated`, `react-native-worklets`.
+
+Use `FlatList`, not FlashList. Use `Animated` from `react-native` with
+`useNativeDriver: true`, not Reanimated. Use `StyleSheet`, not Tailwind classes.
+
+**There is no `metro.config.js`.** It existed only for NativeWind and triggered a
+Windows ESM path crash. Do not recreate it.
 
 ---
 
@@ -78,83 +96,44 @@ expo-web-browser: ~15.0.11
 /
 ├── CLAUDE.md                    ← this file — always read first
 ├── app/                         ← Expo Router screens (file-based routing)
-│   ├── (auth)/
-│   │   ├── index.tsx            ← S1 Splash & sign up
-│   │   ├── profile.tsx          ← S2 Child profile setup
-│   │   ├── taste-quiz.tsx       ← S3 Taste preference quiz
-│   │   └── adventure.tsx        ← S4 Adventure level
+│   ├── _layout.tsx              ← root stack + onboarding gate
+│   ├── onboarding.tsx           ← single-screen setup
+│   ├── settings.tsx             ← reached from gear icon on Today
 │   ├── (tabs)/
-│   │   ├── index.tsx            ← S5 Home dashboard
-│   │   ├── plan.tsx             ← S6 Meal planner
-│   │   ├── explore.tsx          ← S10 Passport & rewards
-│   │   ├── shop.tsx             ← S8 Shopping list
-│   │   └── profile.tsx          ← Profile & settings
-│   ├── recipe/[id].tsx          ← S7 Recipe detail
-│   ├── cook/[id].tsx            ← S9 Guided prep mode
-│   ├── adventure/[cuisine].tsx  ← S11 Adventure mode
+│   │   ├── index.tsx            ← Today
+│   │   ├── plan.tsx             ← Meal planner
+│   │   ├── shop.tsx             ← Shopping list
+│   │   └── passport.tsx         ← Passport & rewards
+│   ├── recipe/[id].tsx          ← Recipe detail
+│   ├── cook/[id].tsx            ← Guided prep + post-cook rating
+│   ├── adventure/[cuisine].tsx  ← Adventure mode
 │   └── unlock/[character].tsx   ← Character unlock reveal
 ├── src/
 │   ├── assets/
-│   │   ├── characters/          ← Character PNG files (see ASSETS.md)
-│   │   ├── stamps/              ← Passport stamp PNGs
-│   │   ├── recipes/             ← Recipe photography PNGs
-│   │   ├── cuisine-cards/       ← Culture story card illustrations
-│   │   └── icons/               ← App icon, splash variants
-│   ├── components/              ← Reusable UI components
-│   │   ├── ui/                  ← Primitive components (Button, Card, Tag)
-│   │   ├── recipe/              ← Recipe-specific components
-│   │   ├── planner/             ← Meal planner grid components
-│   │   ├── passport/            ← Stamp, map, badge components
-│   │   ├── character/           ← Character display + wave animation
-│   │   └── shopping/            ← Shopping list components
-│   ├── constants/
-│   │   ├── tokens.ts            ← ALL design tokens (colours, spacing, type, radius)
-│   │   ├── cuisines.ts          ← Cuisine definitions + accent colours
-│   │   ├── characters.ts        ← Character roster definitions
-│   │   └── routes.ts            ← Route name constants
-│   ├── hooks/
-│   │   ├── useReducedMotion.ts  ← Accessibility: disable animations
-│   │   ├── useCharacter.ts      ← Active character pair state
-│   │   ├── useUnlock.ts         ← Character unlock milestone tracking
-│   │   └── useMealPlan.ts       ← Current week's plan state
-│   ├── navigation/
-│   │   └── TabBar.tsx           ← Custom bottom tab bar component
-│   ├── services/
-│   │   ├── firebase.ts          ← Firebase initialisation
-│   │   ├── auth.ts              ← Authentication service
-│   │   ├── recipes.ts           ← Recipe data fetching
-│   │   ├── planner.ts           ← Meal plan CRUD
-│   │   └── unlock.ts            ← Unlock milestone tracking
-│   ├── store/
-│   │   ├── auth.store.ts        ← User + child profiles (Zustand)
-│   │   ├── planner.store.ts     ← Meal plan state (Zustand)
-│   │   ├── character.store.ts   ← Active character + unlocked pairs (Zustand)
-│   │   └── preferences.store.ts ← Child food preferences (Zustand)
-│   ├── types/
-│   │   ├── recipe.ts            ← Recipe, Ingredient, Step types
-│   │   ├── child.ts             ← ChildProfile, Allergy, FoodPreference types
-│   │   ├── character.ts         ← CharacterPair, OutfitVariant types
-│   │   ├── planner.ts           ← WeekPlan, DayPlan, MealSlot types
-│   │   └── passport.ts          ← Stamp, Badge, PassportProgress types
-│   └── utils/
-│       ├── nutrition.ts         ← Food group tag helpers
-│       ├── preference.ts        ← Preference matching algorithm
-│       └── date.ts              ← Week calculation helpers
-├── docs/
-│   ├── ASSETS.md                ← Asset naming + folder spec (read before touching assets)
-│   ├── SCREENS.md               ← All 11 screens spec (read before building a screen)
-│   ├── DATA-SCHEMA.md           ← Firebase schema (read before writing any data layer)
-│   ├── CHARACTERS.md            ← Character roster + unlock rules
-│   └── DEEPSEEK.md              ← Tasks routed to DeepSeek vs Claude Code
-└── .claude/
-    └── settings.json            ← Claude Code workspace settings
+│   │   ├── characters/          ← 12 files: 4 pairs × hero/face/silhouette
+│   │   └── recipes/             ← recipe photography
+│   ├── components/              ← ui/ recipe/ planner/ passport/ character/ shopping/ profile/
+│   ├── constants/               ← tokens · characters · cuisines · foods · routes
+│   ├── data/
+│   │   └── recipes.json         ← bundled recipe content (generated by scripts/)
+│   ├── hooks/                   ← useReducedMotion · useCharacter · useUnlock · useMealPlan
+│   ├── store/                   ← profile · character · planner · preferences
+│   ├── types/                   ← recipe · child · character · planner · passport
+│   └── utils/                   ← PURE FUNCTIONS ONLY — the tested seam
+│       ├── preference.ts        ← scoring + ranking
+│       ├── milestones.ts        ← unlock evaluation
+│       ├── shopping.ts          ← shopping-list derivation
+│       ├── nutrition.ts         ← food group roll-up
+│       └── date.ts              ← ISO week maths
+├── docs/                        ← ASSETS · SCREENS · CHARACTERS · DEEPSEEK · agents/
+└── scripts/                     ← CSV → src/data/recipes.json importer
 ```
 
 ---
 
 ## Design tokens — quick reference
 
-Full tokens are in `src/constants/tokens.ts`. This is the abbreviated version for quick reference during coding sessions.
+Full tokens in `src/constants/tokens.ts`.
 
 ### Core colours
 ```typescript
@@ -162,179 +141,200 @@ colors.coral[400]   // #D85A30  — primary action, CTAs
 colors.coral[50]    // #FAECE7  — coral backgrounds
 colors.coral[800]   // #712B13  — coral text
 colors.teal[400]    // #1D9E75  — familiar meals, success
-colors.teal[50]     // #E1F5EE  — teal backgrounds
 colors.purple[400]  // #534AB7  — adventure, culture, passport
-colors.purple[50]   // #EEEDFE  — purple backgrounds
 colors.amber[200]   // #EF9F27  — rewards, stars, unlock
-colors.amber[50]    // #FAEEDA  — amber backgrounds
 colors.linen        // #F1EFE8  — ALL screen backgrounds
 colors.white        // #FFFFFF  — card surfaces only
 colors.gray[900]    // #2C2C2A  — primary text
 colors.gray[600]    // #5F5E5A  — secondary text
-colors.gray[400]    // #888780  — tertiary / placeholder text
-colors.gray[100]    // #D3D1C7  — borders (always 0.5px)
+colors.gray[400]    // #888780  — tertiary / placeholder
+colors.gray[100]    // #D3D1C7  — borders
 ```
 
 ### Spacing
 ```typescript
-spacing[1]  // 4px
-spacing[2]  // 8px
-spacing[3]  // 12px
-spacing[4]  // 16px
-spacing[5]  // 20px
-spacing[6]  // 24px  — screen edge margin
-spacing[8]  // 32px
-spacing[12] // 48px  — nav bar height
+spacing[1] 4 · spacing[2] 8 · spacing[3] 12 · spacing[4] 16
+spacing[5] 20 · spacing[6] 24 (screen edge) · spacing[8] 32 · spacing[12] 48
 ```
 
 ### Border radius
 ```typescript
-radius.sm   // 4px   — small tags, planner cells
-radius.md   // 8px   — inputs, small cards
-radius.lg   // 12px  — recipe cards, main cards
-radius.pill // 999   — buttons, chips, progress bars
-radius.full // 9999  — circles (face icons, avatars)
+radius.sm 4 · radius.md 8 · radius.lg 12 · radius.xl 16
+radius.pill 999 · radius.full 9999
 ```
 
-### Typography
+### Typography — scaled for a phone at arm's length in a kitchen
 ```typescript
-typography.display    // 22px, weight 500
-typography.h1         // 18px, weight 500
-typography.h2         // 15px, weight 500
-typography.bodyLg     // 14px, weight 400
-typography.body       // 13px, weight 400
-typography.bodySm     // 12px, weight 400
-typography.label      // 11px, weight 500
-typography.overline   // 10px, weight 500, letterSpacing 0.08
-typography.cultureCard // 13px, weight 400, italic — culture story cards only
+typography.display     // 28px, weight 500
+typography.h1          // 22px, weight 500
+typography.h2          // 18px, weight 500
+typography.bodyLg      // 17px, weight 400
+typography.body        // 15px, weight 400
+typography.bodySm      // 13px, weight 400
+typography.label       // 12px, weight 500
+typography.overline    // 11px, weight 500, letterSpacing 0.08
+typography.cultureCard // 15px, weight 400, italic — culture story cards only
 ```
+
+`touchTarget.min` = 56. Every `Pressable` meets it.
 
 ---
 
-## Screens — quick reference
+## Screens
 
-Full spec in `docs/SCREENS.md`. Screen IDs match the design file.
+| Route | Screen | Notes |
+|---|---|---|
+| `/onboarding` | Setup | Character + age band + allergies + optional name. ~3 taps |
+| `/(tabs)/` | Today | Default screen. Character, stats, tonight's suggestion, shopping card |
+| `/(tabs)/plan` | Meal planner | 7 days × 3 meals |
+| `/(tabs)/shop` | Shopping list | Derived from the plan, checked state persisted |
+| `/(tabs)/passport` | Passport & rewards | Stamps, badges, unlock progress |
+| `/settings` | Settings | Gear icon on Today. Age band, allergies, adventure level, home cuisine |
+| `/recipe/[id]` | Recipe detail | |
+| `/cook/[id]` | Guided prep | Final step captures 👍/👎 |
+| `/adventure/[cuisine]` | Adventure mode | |
+| `/unlock/[character]` | Unlock reveal | Full-screen, non-dismissible |
 
-| ID | Route | Screen name | Auth required |
-|----|-------|-------------|---------------|
-| S1 | `/(auth)/` | Splash & sign up | No |
-| S2 | `/(auth)/profile` | Child profile setup | No |
-| S3 | `/(auth)/taste-quiz` | Taste preference quiz | No |
-| S4 | `/(auth)/adventure` | Adventure level | No |
-| S5 | `/(tabs)/` | Home dashboard | Yes |
-| S6 | `/(tabs)/plan` | Meal planner | Yes |
-| S7 | `/recipe/[id]` | Recipe detail | Yes |
-| S8 | `/(tabs)/shop` | Shopping list | Yes |
-| S9 | `/cook/[id]` | Guided prep mode | Yes |
-| S10 | `/(tabs)/explore` | Passport & rewards | Yes |
-| S11 | `/adventure/[cuisine]` | Adventure mode | Yes |
+Full specs in `docs/SCREENS.md` — note it still describes the pre-simplification
+onboarding flow (S1–S4); `/onboarding` replaces all of it.
+
+---
+
+## Data model — on device, no backend
+
+One child. Everything is a singleton — nothing is keyed by child ID or user ID.
+
+```typescript
+// profile.store
+child:    { name?: string; ageBand: '2-4' | '5-8' | '9-12'; allergies: Allergy[]; allergiesConfirmed: boolean }
+settings: { adventureLevel: 'cautious' | 'curious' | 'adventurous'; homeCuisine?: CuisineId }
+
+// character.store   activePairId, unlockedPairs, milestones
+// planner.store     weekPlans by weekId, shopping checked state
+// preferences.store liked[], disliked[], cuisineHistory
+```
+
+Persistence is Zustand's `persist` middleware over AsyncStorage. There is no
+repository layer, no storage interface, no adapters. **Rule 14 is the seam** —
+honour it and cloud sync can be added later without touching a screen.
+
+Recipes are read from `src/data/recipes.json`, imported as a module. Never fetched.
 
 ---
 
 ## Character system
 
-Full spec in `docs/CHARACTERS.md`.
+Four pairs — The Wanderers. Full spec in `docs/CHARACTERS.md`.
 
-Four static character pairs — The Wanderers:
-- **Marco & Lily** — Caribbean dad + daughter (5yo) — pair ID: `marco-lily`
-- **Mei & Theo** — East Asian mum + son (11yo) — pair ID: `mei-theo`
-- **Nour & Boo** — North African grandma + toddler (2yo, gender-open) — pair ID: `nour-boo`
-- **Elsa, Kit & Finn** — Caucasian sister (14) + twins (7) — pair ID: `elsa-kit-finn`
+`marco-lily` · `mei-theo` · `nour-boo` · `elsa-kit-finn`
 
-**Unlock rules:**
-- 1 pair chosen at onboarding (free, no earn required)
-- Cook 5 meals → unlock pair 2
-- Cook from 3 different cuisines → unlock pair 3
-- Earn 10 passport stamps → unlock pair 4
+**One look per pair.** There are no per-cuisine outfits. Each pair has exactly
+three images: `hero`, `face`, `silhouette`. Do not reintroduce an outfit matrix.
 
-**Active character** is stored in `character.store.ts` and used across all screens.
-The `useCharacter()` hook returns the active pair and all asset paths.
+**Unlock milestones** — evaluated client-side by `evaluateMilestones()` in
+`src/utils/milestones.ts`, a pure function. The hook wraps it; the logic lives
+outside React so it can be tested.
+
+```
+5 meals cooked        → pair 2
+3 distinct cuisines   → pair 3
+10 passport stamps    → pair 4
+```
 
 ---
 
-## Asset loading pattern
+## Assets
 
-Always use this pattern for character and recipe images:
+`docs/ASSETS.md` describes the original ~300-file specification. **It is superseded.**
+The launch requirement is ~36 files:
 
-```typescript
-import FastImage from 'react-native-fast-image'
+| Asset | Approach |
+|---|---|
+| Character hero / face / silhouette | Real illustration — 12 files |
+| Recipe images | Real photography — food must look worth cooking |
+| Passport stamps | **Rendered** — flag emoji on cuisine accent colour, desaturated + lock when unearned |
+| Culture cards | **Rendered** — cuisine accent gradient + flag emoji |
 
-// Character hero (full body)
-<FastImage
-  source={require('@/assets/characters/marco-lily/italian/hero@2x.png')}
-  style={styles.characterHero}
-  resizeMode={FastImage.resizeMode.contain}
-/>
-
-// Character face icon (32px circle)
-<FastImage
-  source={require('@/assets/characters/marco-lily/face@2x.png')}
-  style={styles.faceIcon}
-  resizeMode={FastImage.resizeMode.cover}
-/>
-```
-
-Never use `uri:` for local assets. Never use `<Image>` from react-native.
+Metro cannot resolve dynamic `require()`. Every image is statically referenced in
+a lookup map; adding one is a code change.
 
 ---
 
 ## Animation rules
 
 ```typescript
+import { Animated } from 'react-native'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 const reducedMotion = useReducedMotion()
-
-// Always gate animations
-const animDuration = reducedMotion ? 0 : 240
+const duration = reducedMotion ? 0 : animation.default
 ```
 
-Named durations from tokens:
-- `animation.fast` = 120ms
-- `animation.default` = 240ms
-- `animation.slow` = 400ms
-- `animation.stampDrop` = 500ms
-- `animation.unlockReveal` = 600ms
-- `animation.waveLoop` = 2000ms
+Always `useNativeDriver: true`. Reanimated is not installed.
+
+Durations: `fast` 120 · `default` 240 · `slow` 400 · `stampDrop` 500 ·
+`unlockReveal` 600 · `waveLoop` 2000.
 
 ---
 
-## Firebase collections — quick reference
+## Testing
 
-Full schema in `docs/DATA-SCHEMA.md`.
+**One seam: pure logic in `src/utils/`, run by Vitest.** No component tests, no
+screen tests, no renderer, no mocks.
 
 ```
-users/{userId}
-users/{userId}/children/{childId}
-users/{userId}/preferences/{childId}
-users/{userId}/mealPlans/{weekId}
-users/{userId}/passport/{userId}
-users/{userId}/unlocks/{userId}
-recipes/{recipeId}
-cuisines/{cuisineId}
+npm test           # watch
+npm run test:run   # once
 ```
+
+A good test asserts external behaviour — given this input, this output — and
+survives a rewrite of the function it covers.
+
+If a function needs mocking to test, it is in the wrong place: extract the pure
+part into `src/utils/` and leave the effect in the caller.
 
 ---
 
 ## What to do when stuck
 
-1. Check `docs/SCREENS.md` for the screen spec before building any screen
-2. Check `docs/DATA-SCHEMA.md` before writing any Firebase query
-3. Check `docs/ASSETS.md` before referencing any image file
-4. Check `src/constants/tokens.ts` before using any colour or spacing value
+1. `docs/SCREENS.md` before building a screen (onboarding section is superseded)
+2. The data model above before touching state
+3. `docs/ASSETS.md` before referencing an image (superseded by the table above)
+4. `src/constants/tokens.ts` before using any colour, size or spacing value
 5. If the answer isn't in these files, ask — do not invent a convention
 
 ---
 
 ## Known constraints
 
-- Expo managed workflow — no bare React Native, no custom native modules outside Expo SDK
-- Firebase Firestore only — no REST API calls to third-party services in MVP
-- All recipe data loaded from Firestore — no local JSON files for recipe content
+- Expo managed workflow — no bare React Native, no native modules outside the Expo SDK
+- **No network calls of any kind.** The app works fully offline
+- No accounts. Data lives on one device and is lost if the app is deleted
+- Adding or editing a recipe requires an app release
+- One child profile. Multi-child is explicitly out of scope
 - Character assets are static PNGs — no SVG, no dynamic generation
 - No calorie data stored or displayed anywhere
-- Shopping list substitution suggestions are stored in Firestore with the recipe — not computed client-side
-- Passport stamp unlock is server-validated via Cloud Function — not client-side only
+- Shopping list substitutions are stored with the recipe, not computed at runtime
+- Unlock milestones are evaluated client-side and are trivially cheatable. This is
+  accepted: there is no leaderboard and nothing purchasable
+
+### Development environment
+
+Node 24 **breaks** Expo 54 on Windows with `ERR_UNSUPPORTED_ESM_URL_SCHEME`, and
+blames `metro.config.js` rather than the real cause. Node 20 is required:
+
+```powershell
+$env:PATH = "C:\nvm4w\nodejs;$env:PATH"   # or run start-expo.bat
+```
+
+Verify a build without a phone — 200 means it compiles, 500 carries the error:
+
+```powershell
+Invoke-WebRequest "http://localhost:8081/index.bundle?platform=android&dev=true" -UseBasicParsing
+```
+
+Most installs need `--legacy-peer-deps`. Disconnect any VPN before connecting
+Expo Go, or the reported LAN address will be the tunnel's.
 
 ---
 

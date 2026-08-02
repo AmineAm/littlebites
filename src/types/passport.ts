@@ -1,24 +1,10 @@
-import { Timestamp } from 'firebase/firestore'
-
 export interface Passport {
-  userId:                 string
-  updatedAt:              Timestamp
+  updatedAt:              number   // epoch ms
+  /** cuisineId → number of recipes cooked from it */
   stamps:                 Record<string, number>
-  badges:                 string[]
+  badges:                 BadgeId[]
   totalMealsCooked:       number
   distinctCuisinesCooked: number
-}
-
-export interface Unlocks {
-  userId:        string
-  updatedAt:     Timestamp
-  unlockedPairs: string[]
-  starterPair:   string
-  milestones: {
-    mealsCooked:    number
-    cuisinesTried:  number
-    passportStamps: number
-  }
 }
 
 export type BadgeId = 'first-bite' | 'explorer' | 'little-chef'

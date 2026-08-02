@@ -1,4 +1,3 @@
-import { Timestamp } from 'firebase/firestore'
 import { Allergy } from './child'
 
 export type NutritionTag = 'protein' | 'veg' | 'carbs' | 'dairy' | 'fruit'
@@ -58,6 +57,6 @@ export interface Recipe {
   }
   imageFilename?: string
   launchWave:    1 | 2 | 3
-  createdAt:     Timestamp
-  updatedAt:     Timestamp
+  createdAt?:    number
+  updatedAt?:    number
 }
