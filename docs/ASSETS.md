@@ -1,5 +1,27 @@
 # Little Bites, Big World — Asset Specification
 
+> **This document describes the ORIGINAL ~300-file specification and is kept for
+> reference only. It is superseded by littlebites#1.**
+>
+> The launch requirement is now **~36 files**:
+>
+> | Asset | Count | Approach |
+> |---|---|---|
+> | Character hero / face / silhouette | 12 | Real illustration — 4 pairs × 3 |
+> | Recipe images | ~24 | Real photography — food must look worth cooking |
+> | Passport stamps | **0** | Rendered: flag emoji on cuisine accent colour |
+> | Culture cards | **0** | Rendered: cuisine accent gradient + flag emoji |
+>
+> **There are no per-cuisine character outfits.** That system multiplied every
+> pair by nine and accounted for most of the original count. Each pair now has
+> exactly one look.
+>
+> Everything below the line still applies to the assets that ARE commissioned —
+> sizes, transparency, naming, and the static-require rule.
+
+---
+
+
 **Read this before touching any file in `src/assets/`.**
 This document defines every asset the app requires, exactly how files must be named,
 and how to provide new assets to the development team.

@@ -1,124 +1,46 @@
 # Little Bites, Big World — Screen Specifications
 
 Read the relevant section before building any screen.
-Each screen spec includes: route, auth requirement, data sources, components needed, and key UX rules.
+Each screen spec includes: route, data sources, components needed, and key UX rules.
+
+**There is no auth.** Every screen is reachable once onboarding is done.
+Screen IDs (S5–S11) are retained because they match the design file.
 
 ---
 
-## S1 — Splash & Sign Up
-**Route:** `/(auth)/`  **Auth required:** No  **Figma:** P01-S1
+## Onboarding — the whole of it
+**Route:** `/onboarding`  **Replaces:** the former S1–S4
+
+The entire setup flow is one screen, roughly three taps. There is no sign-up,
+no account, and no taste quiz. See littlebites#1 for why.
 
 ### Layout
-- Full screen, no scroll
-- Hero area (top 40%): amber-to-coral gradient, character silhouettes (4 pairs, partially visible)
-- App logo + tagline centred in hero
-- Bottom area (60%): white card, sign up options
+- Single scroll, tap-only except the optional name field
+- Character pair — 4 cards, tap one (this is the delight moment, not friction)
+- Age band — 3 big buttons: 2-4 / 5-8 / 9-12
+- Allergies — 8 emoji chips, none selected by default
+- Name — one optional field, skippable
+- Primary CTA: "Start cooking"
 
 ### Data
-- None — no Firestore reads
-
-### Components needed
-- `<GradientHero />` — gradient background with character silhouettes
-- `<AuthCard />` — bottom card with social login and email options
-- `<SocialLoginButton variant="google" />`
-- `<EmailSignUpButton />`
+- Writes the single child to the profile store (persisted to AsyncStorage)
+- Writes the chosen pair as the starter pair to the character store
+- Sets `onboardingComplete`, which is what the root layout gates on
 
 ### Key rules
-- Do not show the app name in ALL CAPS — sentence case always
-- Google sign-in uses `expo-auth-session` — not a custom WebView
-- On successful auth, check `user.onboardingComplete`:
-  - `false` → navigate to `/(auth)/profile`
-  - `true` → navigate to `/(tabs)/`
+- Age is a **band**, never an exact number. The three bands map exactly onto
+  the culture-card fact tiers (`age2to4`, `age5to8`, `age9to12`)
+- Allergy selection filters every future suggestion — safety critical
+- Adventure level and home cuisine are deliberately NOT asked here. Nobody
+  knows what "adventure level" means before using the app once; both live in
+  Settings with defaults of `curious` and unset
+- The child profile is singular. There is no children array
 
 ---
 
-## S2 — Child Profile Setup
-**Route:** `/(auth)/profile`  **Auth required:** Yes  **Figma:** P01-S2
-
-### Layout
-- Scroll view — content may exceed one screen
-- Header: "Who are we cooking for?"
-- Child cards (add/remove)
-- Allergy selector (multi-select chips)
-- Character pair selector (2×2 grid)
-- Primary CTA: "Next"
-- Progress dots (3 steps)
-
-### Data
-- Writes to `users/{userId}/children/{childId}` on save
-- Writes starter pair to `users/{userId}/unlocks/{userId}`
-
-### Components needed
-- `<ChildCard />` — name, age, check icon
-- `<AddChildField />` — dashed border, + label
-- `<AllergyChip allergen={} selected={} onToggle={} />`
-- `<CharacterPickerGrid />` — 2×2 grid of character pairs
-- `<CharacterPickerCard pairId={} selected={} onSelect={} />`
-- `<ProgressDots total={3} current={1} />`
-
-### Key rules
-- At least one child required before proceeding
-- Allergy selection filters all future recipe suggestions — this is safety-critical
-- Character selection is the starter pair — stored immediately, cannot be empty
-
----
-
-## S3 — Taste Preference Quiz
-**Route:** `/(auth)/taste-quiz`  **Auth required:** Yes  **Figma:** P01-S3
-
-### Layout
-- Scroll view
-- Header + progress bar (12 of 20 foods rated)
-- 2-column grid of food chips — like / dislike / neutral
-- Primary CTA: "Continue"
-
-### Data
-- Writes to `users/{userId}/preferences/{childId}` on complete
-- Food items are a fixed list — hardcoded in `src/constants/foods.ts`
-
-### Components needed
-- `<FoodPreferenceChip food={} state={'liked'|'disliked'|'neutral'} onTap={} />`
-- `<QuizProgressBar current={} total={} />`
-
-### Key rules
-- Child can do this step themselves — font sizes must be large enough (min 14px for food names)
-- Liked chips: teal[50] bg, teal[400] border, teal heart icon
-- Disliked chips: coral[50] bg, coral[400] border, coral X icon
-- Neutral chips: white bg, gray[100] border, gray circle icon
-- Minimum 8 foods rated before Continue is active
-
----
-
-## S4 — Adventure Level
-**Route:** `/(auth)/adventure`  **Auth required:** Yes  **Figma:** P01-S4
-
-### Layout
-- No scroll (fits one screen)
-- Adventure level selector (3 options: cautious, curious, adventurous)
-- Home cuisine dropdown
-- Unlock teaser card (amber, shows first milestone)
-- Primary CTA: "Start exploring!"
-- Progress dots (step 3 of 3)
-
-### Data
-- Writes `adventureLevel` and `homeCuisine` to `users/{userId}`
-- Writes `onboardingComplete: true` to `users/{userId}` on complete
-- Navigates to `/(tabs)/` on complete
-
-### Components needed
-- `<AdventureLevelOption level={} selected={} onSelect={} />`
-- `<CuisineDropdown value={} onChange={} />`
-- `<UnlockTeaserCard milestone="cook5Meals" />`
-
-### Key rules
-- "Curious" is the default selected state
-- Home cuisine pre-fills based on device locale if possible
-- On complete: mark onboarding done in Firestore, then navigate
-
----
 
 ## S5 — Home Dashboard
-**Route:** `/(tabs)/`  **Auth required:** Yes  **Figma:** P01-S5
+**Route:** `/(tabs)/`  **Figma:** P01-S5
 
 ### Layout
 - Not a scroll view — fixed sections
@@ -131,7 +53,7 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 
 ### Data
 - Real-time listener: `users/{userId}/unlocks/{userId}` — for unlock trigger
-- Real-time listener: `users/{userId}/passport/{userId}` — stamp count
+- Reads the passport from the character store — stamp count
 - Read: current week's meal plan from `users/{userId}/mealPlans/{weekId}`
 - Read: tonight's suggested recipe (first non-empty dinner slot, or preference-matched suggestion)
 
@@ -145,13 +67,14 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 ### Key rules
 - Character outfit matches the adventure cuisine for the current week
 - If no adventure cuisine set, use the user's home cuisine
-- Match score shown as "98% match" — never show raw score
+- No match percentage is shown. A score from a handful of signals cannot
+  support that precision — suggestions are simply ordered by it
 - Unlock progress card only shows if ≥1 pair still locked
 
 ---
 
 ## S6 — Meal Planner
-**Route:** `/(tabs)/plan`  **Auth required:** Yes  **Figma:** P01-S6
+**Route:** `/(tabs)/plan`  **Figma:** P01-S6
 
 ### Layout
 - Scroll view
@@ -183,7 +106,7 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 ---
 
 ## S7 — Recipe Detail
-**Route:** `/recipe/[id]`  **Auth required:** Yes  **Figma:** P01-S7
+**Route:** `/recipe/[id]`  **Figma:** P01-S7
 
 ### Layout
 - Scroll view with sticky header image
@@ -217,7 +140,7 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 ---
 
 ## S8 — Shopping List
-**Route:** `/(tabs)/shop`  **Auth required:** Yes  **Figma:** P01-S8
+**Route:** `/(tabs)/shop`  **Figma:** P01-S8
 
 ### Layout
 - Scroll view
@@ -229,7 +152,7 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 
 ### Data
 - Derived from current week's meal plan — aggregated client-side from recipe ingredients
-- Persists checked state to AsyncStorage (local only — no Firestore write)
+- Checked state persisted in the planner store, keyed by weekId
 
 ### Components needed
 - `<ShoppingCategory category={} items={} />`
@@ -246,7 +169,7 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 ---
 
 ## S9 — Guided Prep Mode
-**Route:** `/cook/[id]`  **Auth required:** Yes  **Figma:** P01-S9
+**Route:** `/cook/[id]`  **Figma:** P01-S9
 
 ### Layout
 - No scroll — single screen per step
@@ -269,7 +192,8 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 
 ### Key rules
 - "Next step" on final step shows a "Meal complete 🎉" confirmation
-- Meal complete triggers Cloud Function via `MealCompleteService`
+- Meal complete calls `recordMealCooked(cuisineId)` on the character store,
+  then offers a one-tap 👍/👎 which feeds `applyMealVerdict`
 - Kid participation prompt is shown with purple background + character face icon + star icon
 - Timer is optional — only shown if `step.timerSeconds` is defined
 - Back button on step 1 shows a "Leave cooking?" confirmation dialog
@@ -277,7 +201,7 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 ---
 
 ## S10 — Passport & Rewards
-**Route:** `/(tabs)/explore`  **Auth required:** Yes  **Figma:** P01-S10
+**Route:** `/(tabs)/passport`  **Figma:** P01-S10
 
 ### Layout
 - Scroll view
@@ -288,7 +212,7 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 - Badges earned: horizontal chip row
 
 ### Data
-- Real-time listener: `users/{userId}/passport/{userId}`
+- Reads the passport from the character store
 
 ### Components needed
 - `<WorldMapDisplay stamps={} activeCharacterPairId={} />`
@@ -306,7 +230,7 @@ Each screen spec includes: route, auth requirement, data sources, components nee
 ---
 
 ## S11 — Adventure Mode
-**Route:** `/adventure/[cuisine]`  **Auth required:** Yes  **Figma:** P01-S11
+**Route:** `/adventure/[cuisine]`  **Figma:** P01-S11
 
 ### Layout
 - Scroll view

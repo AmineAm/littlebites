@@ -195,8 +195,7 @@ typography.cultureCard // 15px, weight 400, italic — culture story cards only
 | `/adventure/[cuisine]` | Adventure mode | |
 | `/unlock/[character]` | Unlock reveal | Full-screen, non-dismissible |
 
-Full specs in `docs/SCREENS.md` — note it still describes the pre-simplification
-onboarding flow (S1–S4); `/onboarding` replaces all of it.
+Full specs in `docs/SCREENS.md`, which is current.
 
 ---
 
@@ -297,9 +296,9 @@ part into `src/utils/` and leave the effect in the caller.
 
 ## What to do when stuck
 
-1. `docs/SCREENS.md` before building a screen (onboarding section is superseded)
+1. `docs/SCREENS.md` before building a screen
 2. The data model above before touching state
-3. `docs/ASSETS.md` before referencing an image (superseded by the table above)
+3. `docs/ASSETS.md` before referencing an image — read its banner first
 4. `src/constants/tokens.ts` before using any colour, size or spacing value
 5. If the answer isn't in these files, ask — do not invent a convention
 
