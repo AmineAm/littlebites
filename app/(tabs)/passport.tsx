@@ -16,7 +16,7 @@ import { BadgeId } from '@/types/passport'
 export default function ExploreScreen() {
   const router = useRouter()
   const { activePair } = useCharacter()
-  const milestones = useCharacterStore((s) => s.milestones)
+  const passport = useCharacterStore((s) => s.passport)
 
   // Mock stamp data — in production this would come from Firestore passport
   const earnedStamps: Record<string, number> = useMemo(() => ({

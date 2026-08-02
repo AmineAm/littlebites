@@ -14,21 +14,21 @@ import { DayKey, MealType } from '@/types/planner'
 
 export default function PlanScreen() {
   const router = useRouter()
-  const { currentPlan, currentWeekId } = useMealPlan()
+  const { plan, weekId } = useMealPlan()
   const [pickerVisible, setPickerVisible] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<{ day: DayKey; meal: MealType } | null>(null)
 
   const handleCellTap = useCallback((day: DayKey, meal: MealType) => {
-    const recipeId = currentPlan?.days[day]?.[meal]
+    const recipeId = plan?.days[day]?.[meal]
     if (recipeId) {
       router.push(`/recipe/${recipeId}`)
     } else {
       setSelectedSlot({ day, meal })
       setPickerVisible(true)
     }
-  }, [currentPlan, router])
+  }, [plan, router])
 
-  const weekLabel = formatWeekLabel(currentWeekId)
+  const weekLabel = formatWeekLabel(weekId)
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -49,9 +49,9 @@ export default function PlanScreen() {
         </View>
 
         {/* ── Planner Grid ── */}
-        {currentPlan ? (
+        {plan ? (
           <PlannerGrid
-            weekPlan={currentPlan}
+            weekPlan={plan}
             onCellTap={handleCellTap}
           />
         ) : (
@@ -64,7 +64,7 @@ export default function PlanScreen() {
         )}
 
         {/* ── Nutrition Summary ── */}
-        {currentPlan && <NutritionWeekSummary weekPlan={currentPlan} />}
+        {plan && <NutritionWeekSummary weekPlan={plan} />}
 
         {/* ── Legend ── */}
         <View style={styles.legend}>

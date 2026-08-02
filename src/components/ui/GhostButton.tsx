@@ -1,5 +1,5 @@
 import { Pressable, Text, StyleSheet, ViewStyle } from 'react-native'
-import { colors, spacing, radius, typography } from '@/constants/tokens'
+import { colors, spacing, radius, typography, touchTarget } from '@/constants/tokens'
 
 interface Props {
   label:   string
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[6],
     alignItems:       'center',
     justifyContent:   'center',
-    minHeight:        52,
+    minHeight:        touchTarget.min,
     backgroundColor:  colors.white,
   },
   pressed: {

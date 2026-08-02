@@ -30,15 +30,7 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router",
-      "expo-web-browser",
-      [
-        "expo-notifications",
-        {
-          "icon": "./src/assets/icons/app-icon.png",
-          "color": "#D85A30"
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true

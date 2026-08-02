@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native'
-import { ImageStyle } from 'react-native-fast-image'
-import FastImage from 'react-native-fast-image'
+import type { ImageStyle } from 'react-native'
+import { Image } from 'expo-image'
 import { CHARACTER_PAIRS } from '@/constants/characters'
 import { CHARACTER_ASSETS } from '@/hooks/useCharacter'
 import { CharacterPairId } from '@/types/character'
@@ -18,7 +18,7 @@ export function CharacterFaceIcon({ pairId, size = 32, style }: Props) {
 
   if (faceAsset) {
     return (
-      <FastImage
+      <Image
         source={faceAsset}
         style={[
           {
@@ -28,7 +28,7 @@ export function CharacterFaceIcon({ pairId, size = 32, style }: Props) {
           },
           style,
         ]}
-        resizeMode={FastImage.resizeMode.cover}
+        contentFit="cover"
       />
     )
   }

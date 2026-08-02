@@ -61,16 +61,24 @@ export const radius = {
   full: 9999,
 } as const
 
+// Scaled for a phone held at arm's length in a kitchen, and for a child tapping
+// food chips. The previous scale (body 13) was an information-density scale and
+// sat well below both iOS (17pt) and Material (16sp) defaults.
 export const typography = {
-  display:     { fontSize: 22, fontWeight: '500' as const },
-  h1:          { fontSize: 18, fontWeight: '500' as const },
-  h2:          { fontSize: 15, fontWeight: '500' as const },
-  bodyLg:      { fontSize: 14, fontWeight: '400' as const },
-  body:        { fontSize: 13, fontWeight: '400' as const },
-  bodySm:      { fontSize: 12, fontWeight: '400' as const },
-  label:       { fontSize: 11, fontWeight: '500' as const },
-  overline:    { fontSize: 10, fontWeight: '500' as const, letterSpacing: 0.8 },
-  cultureCard: { fontSize: 13, fontWeight: '400' as const, fontStyle: 'italic' as const },
+  display:     { fontSize: 28, fontWeight: '500' as const },
+  h1:          { fontSize: 22, fontWeight: '500' as const },
+  h2:          { fontSize: 18, fontWeight: '500' as const },
+  bodyLg:      { fontSize: 17, fontWeight: '400' as const },
+  body:        { fontSize: 15, fontWeight: '400' as const },
+  bodySm:      { fontSize: 13, fontWeight: '400' as const },
+  label:       { fontSize: 12, fontWeight: '500' as const },
+  overline:    { fontSize: 11, fontWeight: '500' as const, letterSpacing: 0.8 },
+  cultureCard: { fontSize: 15, fontWeight: '400' as const, fontStyle: 'italic' as const },
+} as const
+
+/** Minimum interactive target. Parents tap this with wet hands. */
+export const touchTarget = {
+  min: 56,
 } as const
 
 export const animation = {

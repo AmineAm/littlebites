@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { View, Text, Pressable, StyleSheet, Modal } from 'react-native'
 import { colors, spacing, radius, typography } from '@/constants/tokens'
-import { getRecipesFiltered } from '@/services/recipes'
+import { filterRecipes } from '@/data/recipes'
 import { Recipe } from '@/types/recipe'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
@@ -15,14 +15,11 @@ interface Props {
 export function RecipePickerSheet({ visible, cuisineId, onSelect, onDismiss }: Props) {
   const reducedMotion = useReducedMotion()
   const [recipes, setRecipes] = useState<Recipe[]>([])
-  const [loading, setLoading] = useState(false)
+  const loading = false
 
   useEffect(() => {
     if (!visible) return
-    setLoading(true)
-    getRecipesFiltered({ cuisineId, count: 20 })
-      .then(setRecipes)
-      .finally(() => setLoading(false))
+    setRecipes(filterRecipes({ cuisineId, limit: 20 }))
   }, [visible, cuisineId])
 
   return (

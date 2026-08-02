@@ -1,15 +1,15 @@
 // S9 — Guided Prep Mode
 // Figma: P01-S9 | Auth required: Yes
-import { useState, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { View, Text, Pressable, StyleSheet, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { colors, spacing, radius, typography } from '@/constants/tokens'
 import { useCharacter } from '@/hooks/useCharacter'
-import { getRecipe } from '@/services/recipes'
-import { recordMealComplete } from '@/services/unlock'
-import { useAuthStore } from '@/store/auth.store'
-import { Recipe } from '@/types/recipe'
+import { getRecipe } from '@/data/recipes'
+import { useCharacterStore } from '@/store/character.store'
+import { usePreferencesStore } from '@/store/preferences.store'
+import { useUnlock } from '@/hooks/useUnlock'
 import { PrepHeader } from '@/components/recipe/PrepHeader'
 import { StepCard } from '@/components/recipe/StepCard'
 import { PrepTimer } from '@/components/recipe/PrepTimer'
@@ -20,15 +20,17 @@ export default function CookScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const { activePair } = useCharacter()
-  const user = useAuthStore((s) => s.user)
-  const [recipe, setRecipe] = useState<Recipe | null>(null)
-  const [currentStep, setCurrentStep] = useState(1)
-  const [complete, setComplete] = useState(false)
+  const recordMealCooked  = useCharacterStore((s) => s.recordMealCooked)
+  const recordMealVerdict = usePreferencesStore((s) => s.recordMealVerdict)
+  const { unlockedPairs } = useUnlock()
 
-  useEffect(() => {
-    if (!id) return
-    getRecipe(id).then(setRecipe)
-  }, [id])
+  // Synchronous — recipes are bundled, so there is nothing to await.
+  const recipe = id ? getRecipe(id) : null
+
+  const [currentStep, setCurrentStep] = useState(1)
+  const [complete, setComplete]       = useState(false)
+  const [verdict, setVerdict]         = useState<boolean | null>(null)
+  const pairsBefore = useRef<string[]>(unlockedPairs)
 
   if (!recipe) {
     return (
@@ -58,24 +60,28 @@ export default function CookScreen() {
     }
   }
 
-  async function handleNext() {
-    if (isLastStep) {
-      setComplete(true)
-      if (user && recipe) {
-        try {
-          await recordMealComplete({
-            userId: user.uid,
-            childId: user.uid,
-            recipeId: recipe.recipeId,
-            cuisineId: recipe.cuisineId,
-          })
-        } catch (e) {
-          console.error('Failed to record meal complete:', e)
-        }
-      }
-    } else {
+  function handleNext() {
+    if (!isLastStep) {
       setCurrentStep((prev) => prev + 1)
+      return
     }
+    // Client-side now — no Cloud Function. See CLAUDE.md § Known constraints.
+    pairsBefore.current = unlockedPairs
+    if (recipe) recordMealCooked(recipe.cuisineId)
+    setComplete(true)
+  }
+
+  /** One tap, skippable. This replaces the upfront taste quiz. */
+  function handleVerdict(likedIt: boolean) {
+    if (!recipe) return
+    setVerdict(likedIt)
+    recordMealVerdict(recipe, likedIt)
+  }
+
+  function finish() {
+    // A pair that appeared during this cook gets its reveal screen.
+    const newPair = unlockedPairs.find((p) => !pairsBefore.current.includes(p))
+    router.replace(newPair ? `/unlock/${newPair}` : '/(tabs)')
   }
 
   if (complete) {
@@ -84,14 +90,40 @@ export default function CookScreen() {
         <View style={styles.completeContainer}>
           <Text style={styles.completeEmoji}>🎉</Text>
           <Text style={styles.completeTitle}>Meal complete!</Text>
-          <Text style={styles.completeSub}>
-            Great job cooking {recipe.title}!
-          </Text>
-          <PrimaryButton
-            label="Back to home"
-            onPress={() =>           router.replace('/(tabs)/' as any)}
-            style={styles.completeCta}
-          />
+          <Text style={styles.completeSub}>You cooked {recipe.title}.</Text>
+
+          {verdict === null ? (
+            <View style={styles.verdictBlock}>
+              <Text style={styles.verdictQuestion}>Did they like it?</Text>
+              <View style={styles.verdictRow}>
+                <Pressable
+                  style={styles.verdictButton}
+                  onPress={() => handleVerdict(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel="They liked it"
+                >
+                  <Text style={styles.verdictEmoji}>👍</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.verdictButton}
+                  onPress={() => handleVerdict(false)}
+                  accessibilityRole="button"
+                  accessibilityLabel="They did not like it"
+                >
+                  <Text style={styles.verdictEmoji}>👎</Text>
+                </Pressable>
+              </View>
+              <Pressable onPress={finish} hitSlop={8} accessibilityRole="button">
+                <Text style={styles.verdictSkip}>Skip</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <Text style={styles.verdictThanks}>
+              {verdict ? "Noted — we'll suggest more like this." : "Noted — we'll steer away from this."}
+            </Text>
+          )}
+
+          <PrimaryButton label="Done" onPress={finish} style={styles.completeCta} />
         </View>
       </SafeAreaView>
     )
@@ -138,6 +170,18 @@ export default function CookScreen() {
 }
 
 const styles = StyleSheet.create({
+  verdictBlock:    { alignItems: 'center', gap: spacing[3], marginTop: spacing[6] },
+  verdictQuestion: { ...typography.h1, color: colors.gray[900] },
+  verdictRow:      { flexDirection: 'row', gap: spacing[4] },
+  verdictButton: {
+    width: 88, height: 88, borderRadius: radius.full,
+    backgroundColor: colors.white, borderWidth: 2, borderColor: colors.gray[100],
+    alignItems: 'center', justifyContent: 'center',
+  },
+  verdictEmoji:  { fontSize: 40 },
+  verdictSkip:   { ...typography.body, color: colors.gray[600] },
+  verdictThanks: { ...typography.body, color: colors.teal[800], marginTop: spacing[6] },
+
   container: {
     flex: 1,
     backgroundColor: colors.linen,

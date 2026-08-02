@@ -1,67 +1,61 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ChildPreferences } from '@/types/child'
+import { Recipe } from '@/types/recipe'
 
-interface PreferencesState {
-  preferences: Record<string, ChildPreferences>
-  setPreferences: (childId: string, prefs: ChildPreferences) => void
-  updateLiked:    (childId: string, foodId: string) => void
-  updateDisliked: (childId: string, foodId: string) => void
-  clearFood:      (childId: string, foodId: string) => void
+interface PreferencesState extends ChildPreferences {
+  /**
+   * Records the one-tap verdict after cooking. This replaces the upfront taste
+   * quiz — the child actually ate the meal, so it is a truer signal than a
+   * hypothetical answer about a food they were only shown a picture of.
+   */
+  recordMealVerdict: (recipe: Recipe, liked: boolean) => void
+  reset: () => void
 }
 
-export const usePreferencesStore = create<PreferencesState>((set) => ({
-  preferences: {},
+const EMPTY: ChildPreferences = {
+  liked:          [],
+  disliked:       [],
+  cuisineHistory: {},
+}
 
-  setPreferences: (childId, prefs) =>
-    set((state) => ({
-      preferences: { ...state.preferences, [childId]: prefs },
-    })),
+function move(from: string[], to: string[], ids: string[]) {
+  return {
+    from: from.filter((id) => !ids.includes(id)),
+    to:   [...new Set([...to, ...ids])],
+  }
+}
 
-  updateLiked: (childId, foodId) =>
-    set((state) => {
-      const prefs = state.preferences[childId]
-      if (!prefs) return state
-      return {
-        preferences: {
-          ...state.preferences,
-          [childId]: {
-            ...prefs,
-            liked:    [...prefs.liked.filter((f) => f !== foodId), foodId],
-            disliked: prefs.disliked.filter((f) => f !== foodId),
-          },
-        },
-      }
+export const usePreferencesStore = create<PreferencesState>()(
+  persist(
+    (set) => ({
+      ...EMPTY,
+
+      recordMealVerdict: (recipe, likedIt) =>
+        set((s) => {
+          // The signal attaches to what the meal was actually made of.
+          const ids = [...recipe.mainProteins, ...recipe.mainVeg]
+
+          const shifted = likedIt
+            ? move(s.disliked, s.liked, ids)
+            : move(s.liked, s.disliked, ids)
+
+          return {
+            liked:    likedIt ? shifted.to : shifted.from,
+            disliked: likedIt ? shifted.from : shifted.to,
+            cuisineHistory: {
+              ...s.cuisineHistory,
+              [recipe.cuisineId]: likedIt ? 'accepted' : 'rejected',
+            },
+          }
+        }),
+
+      reset: () => set({ ...EMPTY }),
     }),
-
-  updateDisliked: (childId, foodId) =>
-    set((state) => {
-      const prefs = state.preferences[childId]
-      if (!prefs) return state
-      return {
-        preferences: {
-          ...state.preferences,
-          [childId]: {
-            ...prefs,
-            disliked: [...prefs.disliked.filter((f) => f !== foodId), foodId],
-            liked:    prefs.liked.filter((f) => f !== foodId),
-          },
-        },
-      }
-    }),
-
-  clearFood: (childId, foodId) =>
-    set((state) => {
-      const prefs = state.preferences[childId]
-      if (!prefs) return state
-      return {
-        preferences: {
-          ...state.preferences,
-          [childId]: {
-            ...prefs,
-            liked:    prefs.liked.filter((f) => f !== foodId),
-            disliked: prefs.disliked.filter((f) => f !== foodId),
-          },
-        },
-      }
-    }),
-}))
+    {
+      name:    'littlebites-preferences',
+      storage: createJSONStorage(() => AsyncStorage),
+    },
+  ),
+)

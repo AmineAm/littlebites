@@ -1,22 +1,21 @@
-// seeds Firestore with recipes from docs/recipes-template.csv and cuisines from constants.
+// Generates src/data/recipes.json from docs/recipes-template.csv.
 // Usage: npx tsx scripts/import-recipes.ts [--dry-run]
-// Requires: service-account.json in project root or GOOGLE_APPLICATION_CREDENTIALS env var.
+//
+// There is no database. Recipe content ships inside the app bundle, so adding
+// or editing a recipe means re-running this and shipping a release.
 
 import { parse } from 'csv-parse/sync'
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { cert, getApps, initializeApp } from 'firebase-admin/app'
-import { getFirestore, Timestamp } from 'firebase-admin/firestore'
 
 // ── Config ──────────────────────────────────────────────────────────────────────
 
 const __filename = fileURLToPath(import.meta.url)
 const ROOT = resolve(dirname(__filename), '..')
 const CSV_PATH = resolve(ROOT, 'docs', 'recipes-template.csv')
-const SERVICE_ACCOUNT_PATH =
-  process.env.GOOGLE_APPLICATION_CREDENTIALS
-  || resolve(ROOT, 'service-account.json')
+const OUT_DIR  = resolve(ROOT, 'src', 'data')
+const OUT_PATH = resolve(OUT_DIR, 'recipes.json')
 
 const DRY_RUN = process.argv.includes('--dry-run')
 
@@ -53,27 +52,6 @@ const CUISINES: Record<string, CuisineDoc> = {
   french:      { cuisineId:'french',      name:'French',       country:'France',         flagEmoji:'🇫🇷', launchWave:2, accentBg:'#F3E5F5', accentText:'#4A148C', adventureTeaser:'Oui chef! Classic French cooking made fun and family-friendly.' },
   spanish:     { cuisineId:'spanish',     name:'Spanish',      country:'Spain',          flagEmoji:'🇪🇸', launchWave:2, accentBg:'#FFEBEE', accentText:'#B71C1C', adventureTeaser:'Tapas, paella, and the spirit of a Spanish kitchen.' },
 }
-
-// ── Firebase init ──────────────────────────────────────────────────────────────
-
-function initFirebase() {
-  if (getApps().length > 0) return getFirestore()
-
-  if (!existsSync(SERVICE_ACCOUNT_PATH)) {
-    console.error('Service account file not found:', SERVICE_ACCOUNT_PATH)
-    console.error('Download it from Firebase Console → Project Settings → Service Accounts → Generate new private key')
-    console.error('Save it as service-account.json in the project root.')
-    process.exit(1)
-  }
-
-  const sa = JSON.parse(readFileSync(SERVICE_ACCOUNT_PATH, 'utf-8'))
-  initializeApp({ credential: cert(sa) })
-  const db = getFirestore()
-  db.settings({ ignoreUndefinedProperties: true })
-  return db
-}
-
-const db = initFirebase()
 
 // ── CSV parsing ────────────────────────────────────────────────────────────────
 
@@ -119,7 +97,7 @@ function parseCsv(): RawRow[] {
   }
 
   const dataRaw = lines.slice(headerIdx).join('\n')
-  const allRows = parse(dataRaw, {
+  const allRows: Record<string, string>[] = parse(dataRaw, {
     columns: true,
     skip_empty_lines: true,
     relax_column_count: true,
@@ -306,7 +284,7 @@ async function importRecipes() {
   const recipes = rows.map((row) => {
     const ingredients = parseIngredients(row)
     const steps = parseSteps(row)
-    const now = Timestamp.now()
+    const now = Date.now()
 
     return {
       recipeId:      row.RECIPE_ID.trim(),
@@ -348,32 +326,24 @@ async function importRecipes() {
     return
   }
 
-  // ── Write to Firestore ──────────────────────────────────────────────────
+  // ── Write the bundled data file ───────────────────────
 
-  console.log('\nWriting to Firestore...')
+  console.log(`
+Writing ${OUT_PATH}...`)
 
-  // Batch 1: recipes
-  const recipeBatch = db.batch()
-  for (const recipe of recipes) {
-    const ref = db.collection('recipes').doc(recipe.recipeId)
-    recipeBatch.set(ref, recipe)
+  mkdirSync(OUT_DIR, { recursive: true })
+
+  const payload = {
+    generatedAt: new Date().toISOString(),
+    source:      'docs/recipes-template.csv',
+    cuisines:    Object.values(CUISINES),
+    recipes,
   }
-  await recipeBatch.commit()
-  console.log(`  ✅ ${recipes.length} recipes written`)
 
-  // Batch 2: cuisines
-  const cuisineBatch = db.batch()
-  const cuisineEntries = Object.values(CUISINES)
-  for (const c of cuisineEntries) {
-    const ref = db.collection('cuisines').doc(c.cuisineId)
-    cuisineBatch.set(ref, {
-      ...c,
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now(),
-    })
-  }
-  await cuisineBatch.commit()
-  console.log(`  ✅ ${cuisineEntries.length} cuisines written`)
+  writeFileSync(OUT_PATH, JSON.stringify(payload, null, 2), 'utf-8')
+
+  console.log(`  ${recipes.length} recipes`)
+  console.log(`  ${Object.values(CUISINES).length} cuisines`)
 
   console.log('\nImport complete.')
 }

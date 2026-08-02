@@ -12,7 +12,7 @@ interface Props {
 
 export function ShoppingCategory({ category, items, checkedItems, onToggleItem }: Props) {
   const [expanded, setExpanded] = useState(true)
-  const checkedCount = items.filter((item) => checkedItems[item.name]).length
+  const checkedCount = items.filter((item) => checkedItems[item.id ?? item.name]).length
 
   return (
     <View style={styles.container}>
@@ -33,10 +33,10 @@ export function ShoppingCategory({ category, items, checkedItems, onToggleItem }
         <View style={styles.items}>
           {items.map((item) => (
             <ShoppingItem
-              key={item.name}
+              key={item.id ?? item.name}
               item={item}
-              checked={checkedItems[item.name] ?? false}
-              onToggle={() => onToggleItem(item.name)}
+              checked={checkedItems[item.id ?? item.name] ?? false}
+              onToggle={() => onToggleItem(item.id ?? item.name)}
             />
           ))}
         </View>

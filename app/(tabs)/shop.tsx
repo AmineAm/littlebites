@@ -1,47 +1,48 @@
-// S8 — Shopping List
-// Figma: P01-S8 | Auth required: Yes
-import { useState, useMemo } from 'react'
-import { ScrollView, View, Text, Pressable, StyleSheet } from 'react-native'
+// Shop — the week's shopping list, derived from the plan.
+//
+// Nothing is stored here. The list is computed from the planned recipes by
+// deriveShoppingList; only the ticked state is persisted.
+
+import { useMemo } from 'react'
+import { ScrollView, View, Text, Pressable, StyleSheet, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { colors, spacing, radius, typography } from '@/constants/tokens'
 import { useMealPlan } from '@/hooks/useMealPlan'
+import { usePlannerStore } from '@/store/planner.store'
+import { deriveShoppingList } from '@/utils/shopping'
+import { CUISINES } from '@/constants/cuisines'
+import { getRecipe } from '@/data/recipes'
+import { CuisineId } from '@/types/character'
 import { ShoppingCategory } from '@/components/shopping/ShoppingCategory'
 import { ShoppingItemData } from '@/components/shopping/ShoppingItem'
 
-// Mock shopping data — in production this would be derived from meal plan recipes
-const MOCK_ITEMS: ShoppingItemData[] = [
-  { name: 'Chicken breast', amount: '500g', category: 'Protein', cuisineFlag: '🇯🇵' },
-  { name: 'Rice', amount: '2 cups', category: 'Pantry', cuisineFlag: '🇯🇵' },
-  { name: 'Broccoli', amount: '1 head', category: 'Produce', cuisineFlag: '🇮🇹' },
-  { name: 'Soy sauce', amount: '3 tbsp', category: 'Pantry', cuisineFlag: '🇯🇵', substitution: { original: 'soy sauce', substitute: 'coconut aminos' } },
-  { name: 'Eggs', amount: '6', category: 'Protein', cuisineFlag: '🇮🇹' },
-  { name: 'Pasta', amount: '250g', category: 'Pantry', cuisineFlag: '🇮🇹' },
-  { name: 'Tomatoes', amount: '4', category: 'Produce' },
-  { name: 'Cheese', amount: '100g', category: 'Dairy' },
-  { name: 'Bread', amount: '1 loaf', category: 'Bakery' },
-  { name: 'Milk', amount: '1L', category: 'Dairy' },
-]
-
-const CATEGORIES = ['Produce', 'Protein', 'Pantry', 'Dairy', 'Bakery']
+/** "350g", "2 pieces", "1 bunch" — word units get spaced and pluralised. */
+function formatAmount(amount: number, unit: string): string {
+  const rounded = Math.round(amount * 100) / 100
+  const wordUnits = ['piece', 'bunch', 'cup', 'tbsp', 'tsp']
+  if (!wordUnits.includes(unit)) return `${rounded}${unit}`
+  return `${rounded} ${rounded === 1 ? unit : `${unit}s`}`
+}
 
 export default function ShopScreen() {
-  const { currentPlan } = useMealPlan()
-  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
+  const { plan, plannedRecipes, weekId } = useMealPlan()
 
-  const itemsByCategory = useMemo(() => {
-    const grouped: Record<string, ShoppingItemData[]> = {}
-    for (const cat of CATEGORIES) {
-      grouped[cat] = MOCK_ITEMS.filter((item) => item.category === cat)
-    }
-    return grouped
-  }, [])
+  const checkedList   = usePlannerStore((s) => s.checked[weekId] ?? [])
+  const toggleChecked = usePlannerStore((s) => s.toggleChecked)
+  const clearChecked  = usePlannerStore((s) => s.clearChecked)
 
-  const totalItems = MOCK_ITEMS.length
-  const checkedCount = Object.values(checkedItems).filter(Boolean).length
+  const groups = useMemo(
+    () => deriveShoppingList(plan, plannedRecipes),
+    [plan, plannedRecipes],
+  )
 
-  function handleToggleItem(name: string) {
-    setCheckedItems((prev) => ({ ...prev, [name]: !prev[name] }))
-  }
+  const checkedMap = useMemo(
+    () => Object.fromEntries(checkedList.map((k) => [k, true])),
+    [checkedList],
+  )
+
+  const totalItems   = groups.reduce((n, g) => n + g.items.length, 0)
+  const checkedCount = checkedList.length
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -50,40 +51,67 @@ export default function ShopScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* ── Header ── */}
         <View style={styles.header}>
-          <View>
-            <Text style={styles.heading}>Shopping List</Text>
+          <View style={styles.headerText}>
+            <Text style={styles.heading}>This week's list</Text>
             <Text style={styles.subtitle}>
-              {checkedCount} of {totalItems} items checked
+              {totalItems === 0
+                ? 'Nothing to buy yet'
+                : `${checkedCount} of ${totalItems} in the trolley`}
             </Text>
           </View>
-          <Pressable style={styles.orderAll}>
-            <Text style={styles.orderAllText}>Order all</Text>
-          </Pressable>
+          {checkedCount > 0 && (
+            <Pressable
+              style={styles.reset}
+              onPress={() =>
+                Alert.alert('Clear ticks?', 'This unticks everything on the list.', [
+                  { text: 'Cancel', style: 'cancel' },
+                  { text: 'Clear', style: 'destructive', onPress: () => clearChecked(weekId) },
+                ])
+              }
+              accessibilityRole="button"
+            >
+              <Text style={styles.resetText}>Reset</Text>
+            </Pressable>
+          )}
         </View>
 
-        {/* ── Categories ── */}
-        {CATEGORIES.map((category) => {
-          const items = itemsByCategory[category]
-          if (!items || items.length === 0) return null
+        {groups.map((group) => {
+          const items: ShoppingItemData[] = group.items.map((item) => {
+            const firstRecipe = getRecipe(item.recipeIds[0])
+            const cuisine = firstRecipe
+              ? CUISINES[firstRecipe.cuisineId as CuisineId]
+              : undefined
+
+            return {
+              id:          item.key,
+              name:        item.name,
+              amount:      formatAmount(item.amount, item.unit),
+              category:    group.category,
+              cuisineFlag: cuisine?.flagEmoji,
+              substitution: item.substitution
+                ? { original: item.name, substitute: item.substitution }
+                : undefined,
+            }
+          })
+
           return (
             <ShoppingCategory
-              key={category}
-              category={category}
+              key={group.category}
+              category={group.category}
               items={items}
-              checkedItems={checkedItems}
-              onToggleItem={handleToggleItem}
+              checkedItems={checkedMap}
+              onToggleItem={(itemKey) => toggleChecked(weekId, itemKey)}
             />
           )
         })}
 
-        {/* ── Empty state ── */}
         {totalItems === 0 && (
           <View style={styles.emptyState}>
+            <Text style={styles.emptyIcon}>🛒</Text>
             <Text style={styles.emptyText}>No items yet</Text>
             <Text style={styles.emptySub}>
-              Add meals to your plan and the shopping list will populate automatically.
+              Add meals to your plan and the list fills itself.
             </Text>
           </View>
         )}
@@ -103,45 +131,37 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'flex-start',
-    paddingTop: spacing[4],
-    marginBottom: spacing[2],
+    justifyContent: 'space-between',
+    paddingTop: spacing[6],
+    paddingBottom: spacing[2],
+    gap: spacing[4],
   },
-  heading: {
-    ...typography.display,
-    color: colors.gray[900],
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.gray[600],
-    marginTop: spacing[1],
-  },
-  orderAll: {
-    backgroundColor: colors.teal[50],
+  headerText: { flex: 1 },
+  heading:  { ...typography.display, color: colors.gray[900] },
+  subtitle: { ...typography.body, color: colors.gray[600], marginTop: spacing[1] },
+
+  reset: {
     borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.gray[100],
     paddingHorizontal: spacing[3],
     paddingVertical: spacing[2],
+    backgroundColor: colors.white,
   },
-  orderAllText: {
-    ...typography.label,
-    color: colors.teal[400],
-  },
+  resetText: { ...typography.bodySm, color: colors.gray[600] },
 
   emptyState: {
-    backgroundColor: colors.white,
-    borderRadius: radius.lg,
-    padding: spacing[8],
     alignItems: 'center',
+    paddingVertical: spacing[12],
+    gap: spacing[2],
   },
-  emptyText: {
-    ...typography.h2,
-    color: colors.gray[900],
-    marginBottom: spacing[2],
-  },
+  emptyIcon: { fontSize: 40 },
+  emptyText: { ...typography.h1, color: colors.gray[900] },
   emptySub: {
     ...typography.body,
     color: colors.gray[600],
     textAlign: 'center',
+    paddingHorizontal: spacing[6],
   },
 })

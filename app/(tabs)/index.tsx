@@ -1,102 +1,130 @@
-// S5 — Home Dashboard
-// Figma: P01-S5 | Auth required: Yes
-import { useMemo } from 'react'
-import {
-  View, Text, StyleSheet,
-} from 'react-native'
+// Today — the default screen. Answers "what are we cooking tonight".
+import { useEffect, useMemo, useRef } from 'react'
+import { View, Text, Pressable, StyleSheet, Animated, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated'
-import { colors, spacing, radius, typography } from '@/constants/tokens'
+import { useRouter } from 'expo-router'
+import { colors, spacing, radius, typography, animation } from '@/constants/tokens'
 import { CUISINES } from '@/constants/cuisines'
 import { CHARACTER_PAIRS } from '@/constants/characters'
 import { useCharacter } from '@/hooks/useCharacter'
 import { useUnlock } from '@/hooks/useUnlock'
 import { useMealPlan } from '@/hooks/useMealPlan'
-import { useAuthStore } from '@/store/auth.store'
-import { useCharacterStore } from '@/store/character.store'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { useProfileStore } from '@/store/profile.store'
+import { useCharacterStore } from '@/store/character.store'
+import { usePlannerStore } from '@/store/planner.store'
+import { deriveShoppingList } from '@/utils/shopping'
+import { getRecipe, filterRecipes } from '@/data/recipes'
+import { DAY_ORDER } from '@/types/planner'
 import type { CuisineId, CharacterPairId } from '@/types/character'
 
-// ── S5 Main Screen ────────────────────────────────────────────────────────────
-
-export default function HomeScreen() {
+export default function TodayScreen() {
+  const router = useRouter()
   const { activePair } = useCharacter()
   const { nextUnlockTarget } = useUnlock()
-  const { currentPlan } = useMealPlan()
-  const user = useAuthStore((s) => s.user)
-  const milestones = useCharacterStore((s) => s.milestones)
+  const { plan, mealsPlanned, plannedRecipes, weekId } = useMealPlan()
 
-  const adventureCuisineId: CuisineId = (user?.homeCuisine as CuisineId) ?? 'italian'
-  const adventureCuisine = CUISINES[adventureCuisineId]
+  const child    = useProfileStore((s) => s.child)
+  const settings = useProfileStore((s) => s.settings)
+  const passport = useCharacterStore((s) => s.passport)
+  const checked  = usePlannerStore((s) => s.checked[weekId] ?? [])
 
-  const mealsPlanned = useMemo(() => {
-    if (!currentPlan) return 0
-    let count = 0
-    for (const day of Object.values(currentPlan.days)) {
-      if (day.breakfast) count++
-      if (day.lunch) count++
-      if (day.dinner) count++
-    }
-    return count
-  }, [currentPlan])
+  const homeCuisineId: CuisineId = settings.homeCuisine ?? 'italian'
+  const adventureCuisine = CUISINES[homeCuisineId]
 
-  // Tonight's dinner — first non-empty dinner slot this week, or undefined
-  const tonightsDinner = useMemo(() => {
-    if (!currentPlan) return undefined
-    const today = new Date().getDay()
-    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const
-    const todayKey = days[today]
-    const dinnerRecipeId = currentPlan.days[todayKey]?.dinner
-    if (dinnerRecipeId) return dinnerRecipeId
-    // Fallback: find first non-empty dinner this week
-    for (const d of days) {
-      if (currentPlan.days[d]?.dinner) return currentPlan.days[d].dinner
-    }
-    return undefined
-  }, [currentPlan])
+  // Tonight's dinner — today's slot if filled, else a preference-appropriate pick
+  const tonight = useMemo(() => {
+    const todayKey = DAY_ORDER[(new Date().getDay() + 6) % 7]  // JS Sunday=0 → ISO Monday=0
+    const planned = plan.days[todayKey]?.dinner
+    if (planned) return { recipe: getRecipe(planned), planned: true }
+
+    const [suggestion] = filterRecipes({
+      ageBand:   child?.ageBand,
+      allergies: child?.allergies,
+      limit:     1,
+    })
+    return { recipe: suggestion ?? null, planned: false }
+  }, [plan, child])
+
+  const shoppingCount = useMemo(() => {
+    const groups = deriveShoppingList(plan, plannedRecipes)
+    const total = groups.reduce((n, g) => n + g.items.length, 0)
+    return total - checked.length
+  }, [plan, plannedRecipes, checked])
+
+  const stampCount = Object.keys(passport.stamps).length
+  const greeting = child?.name ? `${child.name}'s kitchen` : 'Your kitchen'
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
       <CharacterHero
         pairId={activePair.id}
         displayName={activePair.displayName}
-        tagline={activePair.tagline}
+        tagline={greeting}
         accentColor={activePair.accentColor}
         accentBg={activePair.accentBg}
+        onSettings={() => router.push('/settings')}
       />
 
-      <View style={styles.content}>
-        {/* ── Stats row ── */}
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.statsRow}>
           <StatCard
             label="Meals planned"
             value={String(mealsPlanned)}
             accentColor={colors.teal[400]}
             accentBg={colors.teal[50]}
+            onPress={() => router.push('/(tabs)/plan')}
           />
           <StatCard
             label="Passport stamps"
-            value={String(milestones.passportStamps)}
+            value={String(stampCount)}
             accentColor={colors.purple[400]}
             accentBg={colors.purple[50]}
+            onPress={() => router.push('/(tabs)/passport')}
           />
         </View>
 
-        {/* ── Tonight's suggestion ── */}
-        <RecipeSuggestionCard
-          recipeId={tonightsDinner}
-          accentColor={colors.teal[400]}
-          accentBg={colors.teal[50]}
-        />
+        {/* ── Tonight ── */}
+        <Pressable
+          style={styles.recipeCard}
+          onPress={() => tonight.recipe && router.push(`/recipe/${tonight.recipe.recipeId}`)}
+          accessibilityRole="button"
+        >
+          <Text style={styles.recipeLabel}>
+            {tonight.planned ? "Tonight's dinner" : 'Suggested for tonight'}
+          </Text>
+          <Text style={styles.recipeTitle} numberOfLines={2}>
+            {tonight.recipe?.title ?? 'Nothing planned yet'}
+          </Text>
+          {tonight.recipe && (
+            <Text style={styles.recipeSub}>
+              {tonight.recipe.prepMinutes} min · {tonight.recipe.difficulty}
+            </Text>
+          )}
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>
+              {tonight.recipe ? 'Start cooking →' : 'Plan a meal →'}
+            </Text>
+          </View>
+        </Pressable>
 
-        {/* ── Unlock progress (hidden if all pairs unlocked) ── */}
+        {/* ── Shopping list — one tap from the default screen ── */}
+        {shoppingCount > 0 && (
+          <Pressable
+            style={styles.shopCard}
+            onPress={() => router.push('/(tabs)/shop')}
+            accessibilityRole="button"
+          >
+            <Text style={styles.shopIcon}>🛒</Text>
+            <View style={styles.shopInfo}>
+              <Text style={styles.shopTitle}>This week's list</Text>
+              <Text style={styles.shopSub}>{shoppingCount} still to buy</Text>
+            </View>
+            <Text style={styles.shopChevron}>→</Text>
+          </Pressable>
+        )}
+
         {nextUnlockTarget && (
           <UnlockProgressCard
             pairId={nextUnlockTarget.pairId}
@@ -106,14 +134,21 @@ export default function HomeScreen() {
           />
         )}
 
-        {/* ── Adventure teaser ── */}
-        <AdventureTeaserCard
-          cuisineId={adventureCuisineId}
-          cuisineName={adventureCuisine.name}
-          flagEmoji={adventureCuisine.flagEmoji}
-          teaser={adventureCuisine.adventureTeaser}
-        />
-      </View>
+        <Pressable
+          style={styles.adventureCard}
+          onPress={() => router.push(`/adventure/${homeCuisineId}`)}
+          accessibilityRole="button"
+        >
+          <View style={styles.adventureHeader}>
+            <Text style={styles.adventureFlag}>{adventureCuisine.flagEmoji}</Text>
+            <Text style={styles.adventureCuisineName}>{adventureCuisine.name}</Text>
+          </View>
+          <Text style={styles.adventureTeaser} numberOfLines={2}>
+            {adventureCuisine.adventureTeaser}
+          </Text>
+          <Text style={styles.adventureCta}>Explore this week →</Text>
+        </Pressable>
+      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -121,34 +156,34 @@ export default function HomeScreen() {
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function CharacterHero({
-  pairId,
-  displayName,
-  tagline,
-  accentColor,
-  accentBg,
+  pairId, displayName, tagline, accentColor, accentBg, onSettings,
 }: {
-  pairId:       CharacterPairId
-  displayName:  string
-  tagline:      string
-  accentColor:  string
-  accentBg:     string
+  pairId:      CharacterPairId
+  displayName: string
+  tagline:     string
+  accentColor: string
+  accentBg:    string
+  onSettings:  () => void
 }) {
   const reducedMotion = useReducedMotion()
   const pair = CHARACTER_PAIRS[pairId]
+  const float = useRef(new Animated.Value(0)).current
 
-  // Gentle floating animation for the silhouette placeholder
-  const float = useSharedValue(0)
-  if (!reducedMotion) {
-    float.value = withRepeat(
-      withTiming(10, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true,
+  useEffect(() => {
+    if (reducedMotion) return
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(float, {
+          toValue: 8, duration: animation.waveLoop / 2, useNativeDriver: true,
+        }),
+        Animated.timing(float, {
+          toValue: 0, duration: animation.waveLoop / 2, useNativeDriver: true,
+        }),
+      ]),
     )
-  }
-
-  const floatStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: float.value }],
-  }))
+    loop.start()
+    return () => loop.stop()
+  }, [reducedMotion])
 
   return (
     <View style={[styles.hero, { backgroundColor: accentBg }]}>
@@ -158,20 +193,28 @@ function CharacterHero({
         end={{ x: 0.8, y: 1 }}
         style={styles.heroGradient}
       >
-        {/* Silhouette placeholder row */}
+        <Pressable
+          style={styles.gear}
+          onPress={onSettings}
+          hitSlop={12}
+          accessibilityRole="button"
+          accessibilityLabel="Settings"
+        >
+          <Text style={styles.gearIcon}>⚙️</Text>
+        </Pressable>
+
         <View style={styles.silhouetteRow}>
           {pair.members.map((member, i) => (
             <Animated.View
               key={member.name}
               style={[
                 styles.silhouette,
-                i === 0 && floatStyle,
+                i === 0 && { transform: [{ translateY: float }] },
               ]}
             />
           ))}
         </View>
 
-        {/* Name + tagline */}
         <Text style={styles.heroName}>{displayName}</Text>
         <Text style={styles.heroTagline}>{tagline}</Text>
       </LinearGradient>
@@ -180,120 +223,48 @@ function CharacterHero({
 }
 
 function StatCard({
-  label,
-  value,
-  accentColor,
-  accentBg,
+  label, value, accentColor, accentBg, onPress,
 }: {
-  label:       string
-  value:       string
-  accentColor: string
-  accentBg:    string
+  label: string; value: string; accentColor: string; accentBg: string; onPress: () => void
 }) {
   return (
-    <View style={[styles.statCard, { backgroundColor: accentBg }]}>
+    <Pressable
+      style={[styles.statCard, { backgroundColor: accentBg }]}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${value} ${label}`}
+    >
       <Text style={[styles.statValue, { color: accentColor }]}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  )
-}
-
-function RecipeSuggestionCard({
-  recipeId,
-  accentColor,
-  accentBg,
-}: {
-  recipeId:    string | undefined
-  accentColor: string
-  accentBg:    string
-}) {
-  return (
-    <View style={[styles.recipeCard, { borderLeftColor: accentColor }]}>
-      <Text style={styles.recipeLabel}>Tonight's suggestion</Text>
-      {recipeId
-        ? (
-          <Text style={styles.recipeTitle} numberOfLines={1}>
-            Your planned dinner
-          </Text>
-        )
-        : (
-          <>
-            <Text style={styles.recipeTitle}>
-              Nothing planned yet
-            </Text>
-            <Text style={styles.recipeSub}>
-              Tap Plan to add tonight's dinner
-            </Text>
-          </>
-        )}
-      <View style={[styles.matchBadge, { backgroundColor: accentBg }]}>
-        <Text style={[styles.matchText, { color: accentColor }]}>
-          {recipeId ? 'Planned' : 'Tap to start'}
-        </Text>
-      </View>
-    </View>
+    </Pressable>
   )
 }
 
 function UnlockProgressCard({
-  pairId,
-  type,
-  current,
-  required,
+  pairId, type, current, required,
 }: {
-  pairId:   CharacterPairId
-  type:     'meals' | 'cuisines' | 'stamps'
-  current:  number
+  pairId: CharacterPairId
+  type: 'meals' | 'cuisines' | 'stamps'
+  current: number
   required: number
 }) {
   const target = CHARACTER_PAIRS[pairId]
-  const label = type === 'meals'
-    ? 'meals cooked'
-    : type === 'cuisines'
-      ? 'cuisines tried'
-      : 'passport stamps'
+  const label = type === 'meals' ? 'meals cooked'
+    : type === 'cuisines' ? 'cuisines tried'
+    : 'passport stamps'
 
   return (
-    <View style={[styles.unlockCard, { backgroundColor: colors.amber[50] }]}>
+    <View style={styles.unlockCard}>
       <View style={styles.unlockRow}>
         <View style={styles.unlockInfo}>
           <Text style={styles.unlockLabel}>Next unlock</Text>
           <Text style={styles.unlockName}>{target.displayName}</Text>
-          <Text style={styles.unlockProgress}>
-            {current}/{required} {label}
-          </Text>
+          <Text style={styles.unlockProgress}>{current}/{required} {label}</Text>
         </View>
         <View style={[styles.unlockAvatar, { backgroundColor: target.accentColor }]}>
-          <Text style={styles.unlockAvatarText}>
-            {target.members.map((m) => m.name.split(' ')[0]).join('+')}
-          </Text>
+          <Text style={styles.unlockAvatarText}>{target.displayName.charAt(0)}</Text>
         </View>
       </View>
-    </View>
-  )
-}
-
-function AdventureTeaserCard({
-  cuisineId: _cuisineId,
-  cuisineName,
-  flagEmoji,
-  teaser,
-}: {
-  cuisineId:   string
-  cuisineName: string
-  flagEmoji:   string
-  teaser:      string
-}) {
-  return (
-    <View style={[styles.adventureCard, { backgroundColor: colors.purple[50] }]}>
-      <View style={styles.adventureHeader}>
-        <Text style={styles.adventureFlag}>{flagEmoji}</Text>
-        <Text style={styles.adventureCuisineName}>{cuisineName}</Text>
-      </View>
-      <Text style={styles.adventureTeaser} numberOfLines={2}>
-        {teaser}
-      </Text>
-      <Text style={styles.adventureCta}>Explore this week →</Text>
     </View>
   )
 }
@@ -301,15 +272,9 @@ function AdventureTeaserCard({
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.linen,
-  },
+  container: { flex: 1, backgroundColor: colors.linen },
 
-  // ── Hero ──
-  hero: {
-    flex: 0.28,
-  },
+  hero: { height: 200 },
   heroGradient: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -317,6 +282,9 @@ const styles = StyleSheet.create({
     paddingBottom: spacing[5],
     paddingHorizontal: spacing[6],
   },
+  gear:     { position: 'absolute', top: spacing[3], right: spacing[5] },
+  gearIcon: { fontSize: 22 },
+
   silhouetteRow: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -325,13 +293,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing[3],
   },
   silhouette: {
-    width: 48,
-    height: 72,
+    width: 44,
+    height: 64,
     borderRadius: radius.md,
     backgroundColor: 'rgba(255,255,255,0.3)',
   },
   heroName: {
-    ...typography.display,
+    ...typography.h1,
     color: colors.white,
     textAlign: 'center',
     textShadowColor: 'rgba(0,0,0,0.1)',
@@ -346,132 +314,76 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
 
-  // ── Content area ──
   content: {
-    flex: 1,
     paddingHorizontal: spacing[6],
     paddingTop: spacing[5],
+    paddingBottom: spacing[8],
     gap: spacing[3],
   },
 
-  // ── Stats row ──
-  statsRow: {
-    flexDirection: 'row',
-    gap: spacing[3],
-  },
+  statsRow:  { flexDirection: 'row', gap: spacing[3] },
   statCard: {
     flex: 1,
     borderRadius: radius.lg,
-    paddingVertical: spacing[3],
+    paddingVertical: spacing[4],
     paddingHorizontal: spacing[4],
     alignItems: 'center',
   },
-  statValue: {
-    ...typography.display,
-  },
-  statLabel: {
-    ...typography.label,
-    color: colors.gray[600],
-    marginTop: spacing[1],
-  },
+  statValue: { ...typography.display },
+  statLabel: { ...typography.label, color: colors.gray[600], marginTop: spacing[1] },
 
-  // ── Recipe suggestion card ──
   recipeCard: {
     backgroundColor: colors.white,
     borderRadius: radius.lg,
     borderLeftWidth: 4,
+    borderLeftColor: colors.teal[400],
     padding: spacing[4],
   },
-  recipeLabel: {
-    ...typography.overline,
-    color: colors.gray[400],
-  },
-  recipeTitle: {
-    ...typography.h2,
-    color: colors.gray[900],
-    marginTop: spacing[1],
-  },
-  recipeSub: {
-    ...typography.body,
-    color: colors.gray[600],
-    marginTop: spacing[1],
-  },
-  matchBadge: {
+  recipeLabel: { ...typography.overline, color: colors.gray[400] },
+  recipeTitle: { ...typography.h1, color: colors.gray[900], marginTop: spacing[1] },
+  recipeSub:   { ...typography.body, color: colors.gray[600], marginTop: spacing[1] },
+  badge: {
     alignSelf: 'flex-start',
     borderRadius: radius.pill,
+    backgroundColor: colors.teal[50],
     paddingHorizontal: spacing[3],
-    paddingVertical: spacing[1],
+    paddingVertical: spacing[2],
     marginTop: spacing[3],
   },
-  matchText: {
-    ...typography.label,
-  },
+  badgeText: { ...typography.label, color: colors.teal[800] },
 
-  // ── Unlock progress card ──
-  unlockCard: {
+  shopCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+    backgroundColor: colors.white,
     borderRadius: radius.lg,
     padding: spacing[4],
   },
-  unlockRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  unlockInfo: {
-    flex: 1,
-  },
-  unlockLabel: {
-    ...typography.overline,
-    color: colors.amber[400],
-  },
-  unlockName: {
-    ...typography.h2,
-    color: colors.gray[900],
-    marginTop: spacing[1],
-  },
-  unlockProgress: {
-    ...typography.body,
-    color: colors.gray[600],
-    marginTop: spacing[1],
-  },
+  shopIcon:    { fontSize: 26 },
+  shopInfo:    { flex: 1 },
+  shopTitle:   { ...typography.h2, color: colors.gray[900] },
+  shopSub:     { ...typography.bodySm, color: colors.gray[600], marginTop: 2 },
+  shopChevron: { ...typography.h2, color: colors.coral[400] },
+
+  unlockCard: { borderRadius: radius.lg, padding: spacing[4], backgroundColor: colors.amber[50] },
+  unlockRow:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  unlockInfo: { flex: 1 },
+  unlockLabel:    { ...typography.overline, color: colors.amber[400] },
+  unlockName:     { ...typography.h2, color: colors.gray[900], marginTop: spacing[1] },
+  unlockProgress: { ...typography.body, color: colors.gray[600], marginTop: spacing[1] },
   unlockAvatar: {
-    width: 52,
-    height: 52,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 52, height: 52, borderRadius: radius.full,
+    alignItems: 'center', justifyContent: 'center',
   },
-  unlockAvatarText: {
-    ...typography.label,
-    color: colors.white,
-    fontSize: 9,
-  },
+  unlockAvatarText: { ...typography.h2, color: colors.white },
 
-  // ── Adventure teaser card ──
-  adventureCard: {
-    borderRadius: radius.lg,
-    padding: spacing[4],
-  },
+  adventureCard: { borderRadius: radius.lg, padding: spacing[4], backgroundColor: colors.purple[50] },
   adventureHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[2],
-    marginBottom: spacing[2],
+    flexDirection: 'row', alignItems: 'center', gap: spacing[2], marginBottom: spacing[2],
   },
-  adventureFlag: {
-    fontSize: 18,
-  },
-  adventureCuisineName: {
-    ...typography.h2,
-    color: colors.purple[800],
-  },
-  adventureTeaser: {
-    ...typography.body,
-    color: colors.gray[600],
-  },
-  adventureCta: {
-    ...typography.label,
-    color: colors.purple[400],
-    marginTop: spacing[3],
-  },
+  adventureFlag:        { fontSize: 20 },
+  adventureCuisineName: { ...typography.h2, color: colors.purple[800] },
+  adventureTeaser:      { ...typography.body, color: colors.gray[600] },
+  adventureCta:         { ...typography.label, color: colors.purple[400], marginTop: spacing[3] },
 })

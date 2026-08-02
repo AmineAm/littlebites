@@ -1,27 +1,36 @@
-import { usePlannerStore } from '@/store/planner.store'
+import { usePlannerStore, emptyWeekPlan } from '@/store/planner.store'
 import { getWeekId } from '@/utils/date'
-import { DayKey, MealType } from '@/types/planner'
+import { DayKey, MealType, DAY_ORDER, MEAL_ORDER } from '@/types/planner'
+import { getRecipe } from '@/data/recipes'
 
-export function useMealPlan() {
-  const { plans, setMealSlot, clearMealSlot } = usePlannerStore()
+export function useMealPlan(weekId: string = getWeekId(new Date())) {
+  const plans         = usePlannerStore((s) => s.plans)
+  const setMealSlot   = usePlannerStore((s) => s.setMealSlot)
+  const clearMealSlot = usePlannerStore((s) => s.clearMealSlot)
 
-  const currentWeekId = getWeekId(new Date())
-  const currentPlan = plans[currentWeekId]
+  const plan = plans[weekId] ?? emptyWeekPlan(weekId)
 
-  const activeAdventureCuisine: string | undefined = undefined // resolved from plan + recipe data
+  const plannedRecipeIds = DAY_ORDER.flatMap((day) =>
+    MEAL_ORDER.map((meal) => plan.days[day][meal]).filter(Boolean) as string[],
+  )
 
-  function getMealSlot(day: DayKey, meal: MealType): string | undefined {
-    return currentPlan?.days[day]?.[meal]
-  }
+  const plannedRecipes = plannedRecipeIds
+    .map(getRecipe)
+    .filter((r): r is NonNullable<typeof r> => r !== null)
+
+  /** The cuisine of this week's adventure meal, if one is planned. */
+  const activeAdventureCuisine = plannedRecipes[0]?.cuisineId
 
   return {
-    currentPlan,
-    currentWeekId,
+    weekId,
+    plan,
+    plannedRecipeIds,
+    plannedRecipes,
+    mealsPlanned: plannedRecipeIds.length,
     activeAdventureCuisine,
-    getMealSlot,
+    getMealSlot: (day: DayKey, meal: MealType) => plan.days[day][meal],
     setMealSlot: (day: DayKey, meal: MealType, recipeId: string) =>
-      setMealSlot(currentWeekId, day, meal, recipeId),
-    clearMealSlot: (day: DayKey, meal: MealType) =>
-      clearMealSlot(currentWeekId, day, meal),
+      setMealSlot(weekId, day, meal, recipeId),
+    clearMealSlot: (day: DayKey, meal: MealType) => clearMealSlot(weekId, day, meal),
   }
 }

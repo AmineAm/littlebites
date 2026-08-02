@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { deriveShoppingList } from './shopping'
 import { Recipe, Ingredient } from '@/types/recipe'
-import { WeekPlan } from '@/types/planner'
+import { WeekPlan, DayPlan } from '@/types/planner'
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -38,9 +38,9 @@ function recipe(id: string, ingredients: Ingredient[]): Recipe {
   } as Recipe
 }
 
-const EMPTY_DAY = { breakfast: undefined, lunch: undefined, dinner: undefined }
+const EMPTY_DAY: DayPlan = { breakfast: undefined, lunch: undefined, dinner: undefined }
 
-function plan(slots: Partial<Record<'monday' | 'tuesday', Partial<typeof EMPTY_DAY>>> = {}): WeekPlan {
+function plan(slots: Partial<Record<'monday' | 'tuesday', Partial<DayPlan>>> = {}): WeekPlan {
   return {
     weekId: '2026-W32',
     updatedAt: 0,

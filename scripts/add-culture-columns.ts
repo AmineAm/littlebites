@@ -50,7 +50,7 @@ const metadataLines = lines.slice(0, headerIdx)
 
 // Parse only the data portion
 const dataRaw = lines.slice(headerIdx).join('\n')
-const rows = parse(dataRaw, {
+const rows: Record<string, string>[] = parse(dataRaw, {
   columns: true,
   skip_empty_lines: true,
   relax_column_count: true,

@@ -1,0 +1,2806 @@
+{
+  "generatedAt": "2026-08-02T21:03:01.300Z",
+  "source": "docs/recipes-template.csv",
+  "cuisines": [
+    {
+      "cuisineId": "italian",
+      "name": "Italian",
+      "country": "Italy",
+      "flagEmoji": "🇮🇹",
+      "launchWave": 1,
+      "accentBg": "#FFF3E0",
+      "accentText": "#8B4513",
+      "adventureTeaser": "From sun-dried tomatoes to fresh pasta — Italy on your table tonight."
+    },
+    {
+      "cuisineId": "japanese",
+      "name": "Japanese",
+      "country": "Japan",
+      "flagEmoji": "🇯🇵",
+      "launchWave": 1,
+      "accentBg": "#FCE4EC",
+      "accentText": "#880E4F",
+      "adventureTeaser": "Umami, balance, and a bento box full of wonder."
+    },
+    {
+      "cuisineId": "moroccan",
+      "name": "Moroccan",
+      "country": "Morocco",
+      "flagEmoji": "🇲🇦",
+      "launchWave": 1,
+      "accentBg": "#E8F5E9",
+      "accentText": "#1B5E20",
+      "adventureTeaser": "Warm spices and slow-cooked magic from North Africa."
+    },
+    {
+      "cuisineId": "mexican",
+      "name": "Mexican",
+      "country": "Mexico",
+      "flagEmoji": "🇲🇽",
+      "launchWave": 1,
+      "accentBg": "#FFF8E1",
+      "accentText": "#F57F17",
+      "adventureTeaser": "Bold, bright, and made to be shared with your hands."
+    },
+    {
+      "cuisineId": "indian",
+      "name": "Indian",
+      "country": "India",
+      "flagEmoji": "🇮🇳",
+      "launchWave": 1,
+      "accentBg": "#FBE9E7",
+      "accentText": "#BF360C",
+      "adventureTeaser": "A spice journey with something for every palate."
+    },
+    {
+      "cuisineId": "lebanese",
+      "name": "Lebanese",
+      "country": "Lebanon",
+      "flagEmoji": "🇱🇧",
+      "launchWave": 1,
+      "accentBg": "#E3F2FD",
+      "accentText": "#0D47A1",
+      "adventureTeaser": "Fresh herbs, mezze, and the taste of the Mediterranean."
+    },
+    {
+      "cuisineId": "korean",
+      "name": "Korean",
+      "country": "South Korea",
+      "flagEmoji": "🇰🇷",
+      "launchWave": 1,
+      "accentBg": "#FCE4EC",
+      "accentText": "#880E4F",
+      "adventureTeaser": "Bibimbap, banchan, and bold flavours for curious kids."
+    },
+    {
+      "cuisineId": "greek",
+      "name": "Greek",
+      "country": "Greece",
+      "flagEmoji": "🇬🇷",
+      "launchWave": 1,
+      "accentBg": "#E3F2FD",
+      "accentText": "#0D47A1",
+      "adventureTeaser": "Sun, olives, and flavours from the Aegean coast."
+    },
+    {
+      "cuisineId": "peruvian",
+      "name": "Peruvian",
+      "country": "Peru",
+      "flagEmoji": "🇵🇪",
+      "launchWave": 2,
+      "accentBg": "#E8EAF6",
+      "accentText": "#1A237E",
+      "adventureTeaser": "Where Inca tradition meets modern taste."
+    },
+    {
+      "cuisineId": "ethiopian",
+      "name": "Ethiopian",
+      "country": "Ethiopia",
+      "flagEmoji": "🇪🇹",
+      "launchWave": 2,
+      "accentBg": "#FFF3E0",
+      "accentText": "#E65100",
+      "adventureTeaser": "Eat with your hands and share something ancient."
+    },
+    {
+      "cuisineId": "thai",
+      "name": "Thai",
+      "country": "Thailand",
+      "flagEmoji": "🇹🇭",
+      "launchWave": 2,
+      "accentBg": "#E8F5E9",
+      "accentText": "#1B5E20",
+      "adventureTeaser": "Sweet, sour, salty — Thai food hits all the notes."
+    },
+    {
+      "cuisineId": "west-african",
+      "name": "West African",
+      "country": "West Africa",
+      "flagEmoji": "🌍",
+      "launchWave": 2,
+      "accentBg": "#FFF8E1",
+      "accentText": "#F57F17",
+      "adventureTeaser": "Rich stews and vibrant flavours from the heart of Africa."
+    },
+    {
+      "cuisineId": "french",
+      "name": "French",
+      "country": "France",
+      "flagEmoji": "🇫🇷",
+      "launchWave": 2,
+      "accentBg": "#F3E5F5",
+      "accentText": "#4A148C",
+      "adventureTeaser": "Oui chef! Classic French cooking made fun and family-friendly."
+    },
+    {
+      "cuisineId": "spanish",
+      "name": "Spanish",
+      "country": "Spain",
+      "flagEmoji": "🇪🇸",
+      "launchWave": 2,
+      "accentBg": "#FFEBEE",
+      "accentText": "#B71C1C",
+      "adventureTeaser": "Tapas, paella, and the spirit of a Spanish kitchen."
+    }
+  ],
+  "recipes": [
+    {
+      "recipeId": "rainbow-smoothie-bowl",
+      "title": "Rainbow Smoothie Bowl",
+      "titleAdapted": "The Rainbow Bowl",
+      "cuisineId": "west-african",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 10,
+      "difficulty": "easy",
+      "servings": 2,
+      "allergens": [],
+      "nutritionTags": [
+        "fruit",
+        "dairy"
+      ],
+      "ingredients": [
+        {
+          "name": "frozen mango chunks",
+          "amount": 150,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "frozen banana",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "sliced before freezing",
+          "isGlobal": false
+        },
+        {
+          "name": "full-fat coconut milk",
+          "amount": 0.25,
+          "unit": "cup",
+          "notes": "or plain yogurt",
+          "isGlobal": false
+        },
+        {
+          "name": "fresh strawberries",
+          "amount": 60,
+          "unit": "g",
+          "notes": "sliced",
+          "isGlobal": false
+        },
+        {
+          "name": "fresh blueberries",
+          "amount": 40,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "kiwi",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "peeled and sliced",
+          "isGlobal": false
+        },
+        {
+          "name": "granola low-sugar",
+          "amount": 4,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "chia seeds",
+          "amount": 1,
+          "unit": "tsp",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Add frozen mango, banana and coconut milk to blender. Blend until thick and creamy. Add a splash of liquid only if needed.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can press the blender button!]"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Pour the smoothie base into two wide bowls. Use the back of a spoon to spread it flat.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can smooth the surface!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Arrange strawberries, blueberries and kiwi in colourful rows on top.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can arrange all the fruit!]"
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Sprinkle granola and chia seeds over the bowl. Serve immediately.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can sprinkle the toppings!]"
+        }
+      ],
+      "coreFlavours": [
+        "sweet",
+        "fresh"
+      ],
+      "textures": [],
+      "mainProteins": [],
+      "mainVeg": [],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Serve in a wide shallow bowl so kids can see all the colours. Let them arrange the fruit themselves.",
+        "ageNotes": "Suitable from age 3. Skip granola for under-2s — use soft oat alternative."
+      },
+      "cultureCard": {
+        "countryName": "West Africa",
+        "flagEmoji": "🌍",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "rainbow-smoothie-bowl.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581293,
+      "updatedAt": 1785704581293
+    },
+    {
+      "recipeId": "banana-oat-pancakes",
+      "title": "Banana Oat Pancakes",
+      "titleAdapted": "Fluffy Banana Coins",
+      "cuisineId": "west-african",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 15,
+      "difficulty": "easy",
+      "servings": 4,
+      "allergens": [
+        "eggs",
+        "gluten"
+      ],
+      "nutritionTags": [
+        "carbs",
+        "fruit"
+      ],
+      "ingredients": [
+        {
+          "name": "ripe bananas",
+          "amount": 2,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "rolled oats",
+          "amount": 1,
+          "unit": "cup",
+          "isGlobal": false
+        },
+        {
+          "name": "large eggs",
+          "amount": 2,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "vanilla extract",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "ground cinnamon",
+          "amount": 0.25,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "coconut oil or butter",
+          "amount": 1,
+          "unit": "tsp",
+          "notes": "for the pan",
+          "isGlobal": false
+        },
+        {
+          "name": "fresh berries",
+          "amount": 1,
+          "unit": "cup",
+          "notes": "to serve",
+          "isGlobal": false
+        },
+        {
+          "name": "maple syrup",
+          "amount": 1,
+          "unit": "tbsp",
+          "notes": "to serve",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Add bananas, oats, eggs, vanilla and cinnamon to a blender. Blitz for 30 seconds until smooth. Rest the batter for 2 minutes.",
+          "timerSeconds": 120,
+          "kidParticipation": "[Kids can add the ingredients and press blend!]"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Heat a non-stick pan over medium heat with coconut oil. Pour 2 to 3 tablespoons of batter per pancake.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Cook for 2 minutes until bubbles form on the surface.",
+          "timerSeconds": 120
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Flip each pancake and cook for 1 minute more.",
+          "timerSeconds": 60
+        },
+        {
+          "stepNumber": 5,
+          "instruction": "Stack on a plate and serve with berries and maple syrup.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can add the toppings!]"
+        }
+      ],
+      "coreFlavours": [
+        "sweet",
+        "mild"
+      ],
+      "textures": [],
+      "mainProteins": [],
+      "mainVeg": [],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Cut into small pieces for younger children. Stack on a fun plate with faces made from fruit.",
+        "ageNotes": "Suitable from age 3. For under-1s omit honey. Freeze extras and reheat in the toaster."
+      },
+      "cultureCard": {
+        "countryName": "West Africa",
+        "flagEmoji": "🌍",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "banana-oat-pancakes.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581294,
+      "updatedAt": 1785704581294
+    },
+    {
+      "recipeId": "egg-veggie-mini-muffins",
+      "title": "Egg and Veggie Mini Muffins",
+      "titleAdapted": "Peek-a-Boo Muffins",
+      "cuisineId": "french",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 20,
+      "difficulty": "easy",
+      "servings": 12,
+      "allergens": [
+        "eggs",
+        "dairy"
+      ],
+      "nutritionTags": [
+        "protein",
+        "veg"
+      ],
+      "ingredients": [
+        {
+          "name": "large eggs",
+          "amount": 6,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "baby spinach",
+          "amount": 60,
+          "unit": "g",
+          "notes": "roughly chopped",
+          "isGlobal": false
+        },
+        {
+          "name": "small red bell pepper",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "finely diced",
+          "isGlobal": false
+        },
+        {
+          "name": "cherry tomatoes",
+          "amount": 4,
+          "unit": "piece",
+          "notes": "quartered",
+          "isGlobal": false
+        },
+        {
+          "name": "grated cheddar or mozzarella",
+          "amount": 30,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "spring onions",
+          "amount": 2,
+          "unit": "piece",
+          "notes": "sliced",
+          "isGlobal": false
+        },
+        {
+          "name": "salt",
+          "amount": 0.25,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "olive oil",
+          "amount": 1,
+          "unit": "tsp",
+          "notes": "to grease tin",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Preheat oven to 180C (350F). Grease a 12-hole mini muffin tin with olive oil.",
+          "timerSeconds": 600
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Crack eggs into a jug and whisk well with salt. Add spinach, pepper, tomatoes and spring onions and stir to combine.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can crack the eggs with help!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Pour the egg mixture evenly into the tin filling each hole three-quarters full. Top each with a pinch of cheese.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can spoon the mixture in!]"
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Bake for 15 to 18 minutes until puffed up, golden and set in the centre.",
+          "timerSeconds": 1080
+        },
+        {
+          "stepNumber": 5,
+          "instruction": "Cool for 5 minutes before easing out with a small spatula.",
+          "timerSeconds": 300,
+          "kidParticipation": "[Kids can help pop them out!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "mild"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "large eggs",
+        "baby spinach",
+        "small red bell pepper",
+        "cherry tomatoes",
+        "grated cheddar or mozzarella",
+        "spring onions",
+        "salt",
+        "olive oil"
+      ],
+      "mainVeg": [
+        "large eggs",
+        "baby spinach",
+        "small red bell pepper",
+        "cherry tomatoes",
+        "grated cheddar or mozzarella",
+        "spring onions",
+        "salt",
+        "olive oil"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Serve warm or cold. Any vegetables work — swap in whatever your child likes.",
+        "ageNotes": "Suitable from age 3. Cool completely before giving to toddlers. Freeze individually for lunchboxes."
+      },
+      "cultureCard": {
+        "countryName": "France",
+        "flagEmoji": "🇫🇷",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "egg-veggie-mini-muffins.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581294,
+      "updatedAt": 1785704581294
+    },
+    {
+      "recipeId": "mango-lassi-overnight-oats",
+      "title": "Mango Lassi Overnight Oats",
+      "titleAdapted": "Golden Mango Jars",
+      "cuisineId": "indian",
+      "source": "original",
+      "ageRange": {
+        "min": 4,
+        "max": 12
+      },
+      "prepMinutes": 10,
+      "difficulty": "easy",
+      "servings": 2,
+      "allergens": [
+        "dairy"
+      ],
+      "nutritionTags": [
+        "carbs",
+        "fruit",
+        "dairy"
+      ],
+      "ingredients": [
+        {
+          "name": "rolled oats",
+          "amount": 1,
+          "unit": "cup",
+          "isGlobal": false
+        },
+        {
+          "name": "plain full-fat yogurt",
+          "amount": 0.5,
+          "unit": "cup",
+          "isGlobal": false
+        },
+        {
+          "name": "whole milk or plant milk",
+          "amount": 0.5,
+          "unit": "cup",
+          "isGlobal": false
+        },
+        {
+          "name": "ripe mango",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "diced or frozen and thawed",
+          "isGlobal": false
+        },
+        {
+          "name": "chia seeds",
+          "amount": 1,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "ground cardamom",
+          "amount": 0.25,
+          "unit": "tsp",
+          "isGlobal": true,
+          "substitution": "mixed spice or omit"
+        },
+        {
+          "name": "honey or maple syrup",
+          "amount": 1,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "pinch of saffron dissolved in 1 tbsp warm water",
+          "amount": 1,
+          "unit": "pinch",
+          "notes": "optional",
+          "isGlobal": true,
+          "substitution": "omit or use a drop of turmeric for colour"
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "In two jars or bowls combine oats, yogurt, milk, chia seeds, cardamom and honey. Stir well. Add the saffron water if using.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can stir everything together!]"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Cover and refrigerate overnight or for at least 6 hours.",
+          "timerSeconds": 21600
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "In the morning stir each jar well. If too thick add a splash of milk. Top generously with diced mango and serve cold.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can top their own jar!]"
+        }
+      ],
+      "coreFlavours": [
+        "sweet",
+        "mild",
+        "fresh"
+      ],
+      "textures": [],
+      "mainProteins": [],
+      "mainVeg": [],
+      "substitutions": {
+        "ground cardamom": "mixed spice or omit",
+        "pinch of saffron dissolved in 1 tbsp warm water": "omit or use a drop of turmeric for colour"
+      },
+      "kidAdaptation": {
+        "presentation": "Serve in a jar with a spoon — the visual is part of the appeal. Top with mango just before eating.",
+        "ageNotes": "Suitable from age 4. Use full-fat yogurt and whole milk for children under 5 for adequate calorie density."
+      },
+      "cultureCard": {
+        "countryName": "India",
+        "flagEmoji": "🇮🇳",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "mango-lassi-overnight-oats.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581294,
+      "updatedAt": 1785704581294
+    },
+    {
+      "recipeId": "avocado-toast-soldiers",
+      "title": "Avocado Toast Soldiers",
+      "titleAdapted": "Green Soldiers",
+      "cuisineId": "french",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 10,
+      "difficulty": "easy",
+      "servings": 2,
+      "allergens": [
+        "eggs",
+        "gluten"
+      ],
+      "nutritionTags": [
+        "carbs",
+        "veg",
+        "protein"
+      ],
+      "ingredients": [
+        {
+          "name": "thick slices whole grain bread",
+          "amount": 2,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "ripe avocado",
+          "amount": 1,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "lemon juice",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "pinch of salt",
+          "amount": 1,
+          "unit": "pinch",
+          "isGlobal": false
+        },
+        {
+          "name": "soft-boiled or poached eggs",
+          "amount": 2,
+          "unit": "piece",
+          "notes": "to serve",
+          "isGlobal": false
+        },
+        {
+          "name": "cherry tomatoes",
+          "amount": 4,
+          "unit": "piece",
+          "notes": "halved to serve",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Toast bread until golden and crisp. Halve the avocado, remove the stone and scoop the flesh into a bowl.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Add lemon juice and salt. Mash with a fork to your child's preferred texture — chunky or smooth.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can mash the avocado!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Spread the avocado generously over the toast. Cut each slice into 4 long strips.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can spread the avocado!]"
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Serve alongside the eggs in an egg cup for dipping. Scatter cherry tomatoes on the plate.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can arrange the plate!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "fresh",
+        "mild"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "thick slices whole grain bread",
+        "ripe avocado",
+        "lemon juice",
+        "pinch of salt",
+        "soft-boiled or poached eggs",
+        "cherry tomatoes"
+      ],
+      "mainVeg": [
+        "thick slices whole grain bread",
+        "ripe avocado",
+        "lemon juice",
+        "pinch of salt",
+        "soft-boiled or poached eggs",
+        "cherry tomatoes"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Cut into soldiers so children can dip independently. Place egg in a brightly coloured egg cup.",
+        "ageNotes": "Suitable from age 3. Skip salt for under-1s. For toddlers mash avocado very smooth."
+      },
+      "cultureCard": {
+        "countryName": "France",
+        "flagEmoji": "🇫🇷",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "avocado-toast-soldiers.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581295,
+      "updatedAt": 1785704581295
+    },
+    {
+      "recipeId": "hidden-veggie-pasta-sauce",
+      "title": "Hidden Veggie Pasta Sauce",
+      "titleAdapted": "Magic Red Pasta",
+      "cuisineId": "italian",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 35,
+      "difficulty": "medium",
+      "servings": 4,
+      "allergens": [
+        "gluten",
+        "dairy"
+      ],
+      "nutritionTags": [
+        "carbs",
+        "veg"
+      ],
+      "ingredients": [
+        {
+          "name": "whole wheat pasta penne or fusilli",
+          "amount": 300,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "medium red onion",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "roughly chopped",
+          "isGlobal": false
+        },
+        {
+          "name": "garlic cloves",
+          "amount": 2,
+          "unit": "piece",
+          "notes": "minced",
+          "isGlobal": false
+        },
+        {
+          "name": "medium carrot",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "peeled and chopped",
+          "isGlobal": false
+        },
+        {
+          "name": "medium courgette",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "chopped",
+          "isGlobal": false
+        },
+        {
+          "name": "baby spinach",
+          "amount": 60,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "crushed tomatoes",
+          "amount": 400,
+          "unit": "g",
+          "notes": "1 tin",
+          "isGlobal": false
+        },
+        {
+          "name": "olive oil",
+          "amount": 1,
+          "unit": "tbsp",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Heat olive oil in a saucepan over medium heat. Add onion and cook 3 to 4 minutes until soft. Add garlic, carrot and courgette and cook for 5 more minutes.",
+          "timerSeconds": 540
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Pour in crushed tomatoes and add oregano and salt. Stir well, cover and simmer for 15 minutes until all vegetables are completely tender.",
+          "timerSeconds": 900
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Remove from heat. Add spinach and stir until wilted. Use a stick blender and blitz until completely smooth. Taste and adjust seasoning.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Meanwhile cook pasta in a large pot of salted boiling water according to packet instructions. Drain reserving a cup of pasta water.",
+          "timerSeconds": 600
+        },
+        {
+          "stepNumber": 5,
+          "instruction": "Toss the hot pasta with the vegetable sauce adding a splash of pasta water to loosen if needed. Serve with Parmesan on top.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can sprinkle the cheese!]"
+        }
+      ],
+      "coreFlavours": [
+        "mild",
+        "savoury"
+      ],
+      "textures": [],
+      "mainProteins": [],
+      "mainVeg": [
+        "whole wheat pasta penne or fusilli",
+        "medium red onion",
+        "garlic cloves",
+        "medium carrot",
+        "medium courgette",
+        "baby spinach",
+        "crushed tomatoes",
+        "olive oil"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Blend sauce completely smooth so no vegetable is visible. Serve with grated Parmesan in a small bowl on the side.",
+        "ageNotes": "Suitable from age 3. For toddlers cut pasta into shorter pieces."
+      },
+      "cultureCard": {
+        "countryName": "Italy",
+        "flagEmoji": "🇮🇹",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "hidden-veggie-pasta-sauce.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581295,
+      "updatedAt": 1785704581295
+    },
+    {
+      "recipeId": "rainbow-pita-pizzas",
+      "title": "Rainbow Pita Pizzas",
+      "titleAdapted": "My Own Pizza",
+      "cuisineId": "lebanese",
+      "source": "original",
+      "ageRange": {
+        "min": 4,
+        "max": 12
+      },
+      "prepMinutes": 15,
+      "difficulty": "easy",
+      "servings": 4,
+      "allergens": [
+        "gluten",
+        "dairy"
+      ],
+      "nutritionTags": [
+        "carbs",
+        "veg",
+        "dairy"
+      ],
+      "ingredients": [
+        {
+          "name": "small whole wheat pita breads",
+          "amount": 4,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "tomato passata or pizza sauce",
+          "amount": 8,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "grated mozzarella",
+          "amount": 100,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "red bell pepper",
+          "amount": 0.5,
+          "unit": "piece",
+          "notes": "thinly sliced",
+          "isGlobal": false
+        },
+        {
+          "name": "yellow bell pepper",
+          "amount": 0.5,
+          "unit": "piece",
+          "notes": "thinly sliced",
+          "isGlobal": false
+        },
+        {
+          "name": "cherry tomatoes",
+          "amount": 8,
+          "unit": "piece",
+          "notes": "halved",
+          "isGlobal": false
+        },
+        {
+          "name": "small courgette",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "thinly sliced into rounds",
+          "isGlobal": false
+        },
+        {
+          "name": "dried oregano",
+          "amount": 1,
+          "unit": "pinch",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Preheat oven to 200C (400F). Lay pita breads flat on a baking tray.",
+          "timerSeconds": 600
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Spread 2 tablespoons of passata over each pita leaving a small border. Scatter mozzarella evenly over each one.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can spread the sauce and add the cheese!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Arrange peppers, cherry tomatoes and courgette on top. Sprinkle with oregano.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can arrange all their own toppings!]"
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Bake for 10 to 12 minutes until cheese is bubbling and edges of pita are crisp.",
+          "timerSeconds": 720
+        },
+        {
+          "stepNumber": 5,
+          "instruction": "Scatter fresh basil leaves on top. Serve immediately cut into wedges if needed.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can tear the basil leaves!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "mild"
+      ],
+      "textures": [],
+      "mainProteins": [],
+      "mainVeg": [
+        "small whole wheat pita breads",
+        "tomato passata or pizza sauce",
+        "grated mozzarella",
+        "red bell pepper",
+        "yellow bell pepper",
+        "cherry tomatoes",
+        "small courgette",
+        "dried oregano"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "remove": "Substitute any toppings your child dislikes with sweetcorn or mushrooms.",
+        "presentation": "Let kids build their own pizza from a toppings selection laid out on the table. The ownership makes them eat the veg.",
+        "ageNotes": "Suitable from age 4. Cut into small wedges for younger children."
+      },
+      "cultureCard": {
+        "countryName": "Lebanon",
+        "flagEmoji": "🇱🇧",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "rainbow-pita-pizzas.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581295,
+      "updatedAt": 1785704581295
+    },
+    {
+      "recipeId": "chicken-corn-quesadillas",
+      "title": "Chicken and Corn Quesadillas",
+      "titleAdapted": "Crunchy Chicken Pockets",
+      "cuisineId": "mexican",
+      "source": "original",
+      "ageRange": {
+        "min": 4,
+        "max": 12
+      },
+      "prepMinutes": 20,
+      "difficulty": "easy",
+      "servings": 4,
+      "allergens": [
+        "gluten",
+        "dairy"
+      ],
+      "nutritionTags": [
+        "protein",
+        "carbs"
+      ],
+      "ingredients": [
+        {
+          "name": "cooked chicken breast",
+          "amount": 300,
+          "unit": "g",
+          "notes": "shredded",
+          "isGlobal": false
+        },
+        {
+          "name": "tinned or frozen sweetcorn",
+          "amount": 100,
+          "unit": "g",
+          "notes": "drained",
+          "isGlobal": false
+        },
+        {
+          "name": "grated cheddar or Monterey Jack",
+          "amount": 120,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "medium whole wheat tortillas",
+          "amount": 8,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "mild paprika",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "ground cumin",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "salt",
+          "amount": 0.25,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "plain yogurt or guacamole",
+          "amount": 1,
+          "unit": "cup",
+          "notes": "to serve",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "In a bowl mix shredded chicken with paprika, cumin and salt until evenly coated.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Lay 4 tortillas flat. Divide chicken, sweetcorn and cheese evenly across them. Top each with a second tortilla and press down firmly.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can help layer the fillings!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Heat a large non-stick pan over medium heat with a light coating of oil. Cook each quesadilla for 2 to 3 minutes per side until golden and cheese is melted.",
+          "timerSeconds": 300
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Transfer to a board and slice each into 4 wedges. Serve with yogurt or guacamole on the side.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can dip their own wedges!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "mild"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "cooked chicken breast",
+        "tinned or frozen sweetcorn",
+        "grated cheddar or Monterey Jack",
+        "medium whole wheat tortillas",
+        "mild paprika",
+        "ground cumin",
+        "salt",
+        "plain yogurt or guacamole"
+      ],
+      "mainVeg": [],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Cut into small triangles. Serve with plain yogurt as a cool dipping sauce.",
+        "ageNotes": "Suitable from age 4. Use unseasoned chicken for younger toddlers."
+      },
+      "cultureCard": {
+        "countryName": "Mexico",
+        "flagEmoji": "🇲🇽",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "chicken-corn-quesadillas.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581295,
+      "updatedAt": 1785704581295
+    },
+    {
+      "recipeId": "edamame-rice-bowl",
+      "title": "Japanese Edamame Rice Bowl",
+      "titleAdapted": "Rainbow Rice Box",
+      "cuisineId": "japanese",
+      "source": "original",
+      "ageRange": {
+        "min": 5,
+        "max": 12
+      },
+      "prepMinutes": 15,
+      "difficulty": "easy",
+      "servings": 2,
+      "allergens": [
+        "soy",
+        "sesame"
+      ],
+      "nutritionTags": [
+        "carbs",
+        "protein",
+        "veg"
+      ],
+      "ingredients": [
+        {
+          "name": "cooked short-grain brown rice",
+          "amount": 300,
+          "unit": "g",
+          "notes": "warm",
+          "isGlobal": false
+        },
+        {
+          "name": "frozen edamame shelled",
+          "amount": 120,
+          "unit": "g",
+          "notes": "thawed",
+          "isGlobal": false
+        },
+        {
+          "name": "medium carrot",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "grated or cut into matchsticks",
+          "isGlobal": false
+        },
+        {
+          "name": "cucumber",
+          "amount": 0.5,
+          "unit": "piece",
+          "notes": "thinly sliced",
+          "isGlobal": false
+        },
+        {
+          "name": "cherry tomatoes",
+          "amount": 4,
+          "unit": "piece",
+          "notes": "halved",
+          "isGlobal": false
+        },
+        {
+          "name": "sesame oil",
+          "amount": 1,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "low-sodium soy sauce or tamari",
+          "amount": 1,
+          "unit": "tbsp",
+          "isGlobal": true,
+          "substitution": "coconut aminos"
+        },
+        {
+          "name": "rice vinegar",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": true,
+          "substitution": "a few drops of lemon juice"
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "In a small bowl whisk together sesame oil, soy sauce and rice vinegar to make the dressing.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Divide warm rice between two bowls. Arrange edamame, carrot, cucumber and cherry tomatoes in sections on top of the rice.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can arrange their own bowl sections!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Drizzle the dressing over the bowls. Sprinkle with sesame seeds and add nori strips if using. Serve immediately.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can pour their own dressing!]"
+        }
+      ],
+      "coreFlavours": [
+        "mild",
+        "savoury",
+        "umami"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "cooked short-grain brown rice",
+        "frozen edamame shelled",
+        "medium carrot",
+        "cucumber",
+        "cherry tomatoes",
+        "sesame oil",
+        "low-sodium soy sauce or tamari",
+        "rice vinegar"
+      ],
+      "mainVeg": [
+        "cooked short-grain brown rice",
+        "frozen edamame shelled",
+        "medium carrot",
+        "cucumber",
+        "cherry tomatoes",
+        "sesame oil",
+        "low-sodium soy sauce or tamari",
+        "rice vinegar"
+      ],
+      "substitutions": {
+        "low-sodium soy sauce or tamari": "coconut aminos",
+        "rice vinegar": "a few drops of lemon juice"
+      },
+      "kidAdaptation": {
+        "presentation": "Arrange toppings in separate sections so children can eat each component separately if preferred.",
+        "ageNotes": "Suitable from age 5. Use tamari for gluten-free. Omit sesame seeds under age 3 — choking risk."
+      },
+      "cultureCard": {
+        "countryName": "Japan",
+        "flagEmoji": "🇯🇵",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "edamame-rice-bowl.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581295,
+      "updatedAt": 1785704581295
+    },
+    {
+      "recipeId": "red-lentil-soup",
+      "title": "Red Lentil Soup with Crusty Bread",
+      "titleAdapted": "Magic Orange Soup",
+      "cuisineId": "lebanese",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 35,
+      "difficulty": "medium",
+      "servings": 6,
+      "allergens": [
+        "gluten"
+      ],
+      "nutritionTags": [
+        "protein",
+        "veg",
+        "carbs"
+      ],
+      "ingredients": [
+        {
+          "name": "red lentils",
+          "amount": 200,
+          "unit": "g",
+          "notes": "rinsed",
+          "isGlobal": false
+        },
+        {
+          "name": "large onion",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "diced",
+          "isGlobal": false
+        },
+        {
+          "name": "garlic cloves",
+          "amount": 2,
+          "unit": "piece",
+          "notes": "minced",
+          "isGlobal": false
+        },
+        {
+          "name": "medium carrot",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "diced",
+          "isGlobal": false
+        },
+        {
+          "name": "medium potato",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "peeled and diced",
+          "isGlobal": false
+        },
+        {
+          "name": "ground cumin",
+          "amount": 1,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "ground turmeric",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "vegetable stock low-sodium",
+          "amount": 1,
+          "unit": "cup",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Heat olive oil in a large pot over medium heat. Add onion and cook for 5 minutes until softened. Add garlic, cumin and turmeric and stir for 1 minute.",
+          "timerSeconds": 360
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Add lentils, carrot, potato, vegetable stock and salt. Bring to a boil then reduce heat and simmer for 25 minutes until lentils and vegetables are completely tender.",
+          "timerSeconds": 1500
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Use a stick blender to blitz the soup until completely smooth. Stir in lemon juice. Taste and adjust seasoning.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Ladle into bowls and serve with crusty whole grain bread for dipping.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can help dip the bread!]"
+        }
+      ],
+      "coreFlavours": [
+        "mild",
+        "savoury",
+        "spiced"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "red lentils",
+        "large onion",
+        "garlic cloves",
+        "medium carrot",
+        "medium potato",
+        "ground cumin",
+        "ground turmeric",
+        "vegetable stock low-sodium"
+      ],
+      "mainVeg": [
+        "red lentils",
+        "large onion",
+        "garlic cloves",
+        "medium carrot",
+        "medium potato",
+        "ground cumin",
+        "ground turmeric",
+        "vegetable stock low-sodium"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Serve in a colourful bowl with a swirl of yogurt on top. Pair with bread soldiers for dipping.",
+        "ageNotes": "Suitable from age 3. Blend completely smooth for texture-averse children. Freeze in portions."
+      },
+      "cultureCard": {
+        "countryName": "Lebanon",
+        "flagEmoji": "🇱🇧",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "red-lentil-soup.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581295,
+      "updatedAt": 1785704581295
+    },
+    {
+      "recipeId": "sheet-pan-salmon",
+      "title": "Sheet-Pan Salmon with Sweet Potato",
+      "titleAdapted": "Golden Fish Tray",
+      "cuisineId": "french",
+      "source": "original",
+      "ageRange": {
+        "min": 5,
+        "max": 12
+      },
+      "prepMinutes": 30,
+      "difficulty": "medium",
+      "servings": 4,
+      "allergens": [
+        "fish"
+      ],
+      "nutritionTags": [
+        "protein",
+        "carbs",
+        "veg"
+      ],
+      "ingredients": [
+        {
+          "name": "salmon fillets approx 120g each",
+          "amount": 4,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "medium sweet potatoes",
+          "amount": 2,
+          "unit": "piece",
+          "notes": "peeled and cut into wedges",
+          "isGlobal": false
+        },
+        {
+          "name": "olive oil",
+          "amount": 2,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "honey or maple syrup",
+          "amount": 1,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "mild paprika",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "garlic powder",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "tenderstem broccoli or green beans",
+          "amount": 200,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "lemon",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "sliced into rounds",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Preheat oven to 200C (400F). Line a large baking tray with parchment paper.",
+          "timerSeconds": 600
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Toss sweet potato wedges with 1 tablespoon olive oil, honey and paprika. Spread on the tray and roast for 15 minutes.",
+          "timerSeconds": 900
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Push the sweet potato to the sides. Place salmon fillets in the centre of the tray. Drizzle with remaining olive oil and garlic powder. Lay broccoli and lemon slices around the tray.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Roast for 12 to 15 minutes until salmon flakes easily with a fork and sweet potato is caramelised.",
+          "timerSeconds": 840
+        },
+        {
+          "stepNumber": 5,
+          "instruction": "Plate everything straight from the tray. Squeeze the roasted lemon slices over the salmon to serve.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can squeeze the lemon!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "mild",
+        "sweet"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "salmon fillets approx 120g each",
+        "medium sweet potatoes",
+        "olive oil",
+        "honey or maple syrup",
+        "mild paprika",
+        "garlic powder",
+        "tenderstem broccoli or green beans",
+        "lemon"
+      ],
+      "mainVeg": [
+        "salmon fillets approx 120g each",
+        "medium sweet potatoes",
+        "olive oil",
+        "honey or maple syrup",
+        "mild paprika",
+        "garlic powder",
+        "tenderstem broccoli or green beans",
+        "lemon"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Serve salmon flaked off the skin in a bowl over sweet potato. Remove lemon slices before serving to young children.",
+        "ageNotes": "Suitable from age 5. Check carefully for bones before serving to any child. For toddlers flake salmon finely."
+      },
+      "cultureCard": {
+        "countryName": "France",
+        "flagEmoji": "🇫🇷",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "sheet-pan-salmon.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    },
+    {
+      "recipeId": "mild-chickpea-curry",
+      "title": "Mild Chickpea Coconut Curry",
+      "titleAdapted": "Creamy Yellow Curry",
+      "cuisineId": "indian",
+      "source": "original",
+      "ageRange": {
+        "min": 5,
+        "max": 12
+      },
+      "prepMinutes": 35,
+      "difficulty": "medium",
+      "servings": 6,
+      "allergens": [],
+      "nutritionTags": [
+        "protein",
+        "veg"
+      ],
+      "ingredients": [
+        {
+          "name": "tins of chickpeas 400g each",
+          "amount": 2,
+          "unit": "piece",
+          "notes": "drained and rinsed",
+          "isGlobal": false
+        },
+        {
+          "name": "coconut milk",
+          "amount": 400,
+          "unit": "g",
+          "notes": "1 tin",
+          "isGlobal": false
+        },
+        {
+          "name": "crushed tomatoes",
+          "amount": 400,
+          "unit": "g",
+          "notes": "1 tin",
+          "isGlobal": false
+        },
+        {
+          "name": "large onion",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "finely diced",
+          "isGlobal": false
+        },
+        {
+          "name": "garlic cloves",
+          "amount": 3,
+          "unit": "piece",
+          "notes": "minced",
+          "isGlobal": false
+        },
+        {
+          "name": "fresh ginger",
+          "amount": 1,
+          "unit": "tsp",
+          "notes": "grated",
+          "isGlobal": false
+        },
+        {
+          "name": "mild curry powder not hot",
+          "amount": 1.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "baby spinach or frozen peas",
+          "amount": 80,
+          "unit": "g",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Heat oil in a large pan over medium heat. Add onion and cook for 5 to 6 minutes until golden. Add garlic and ginger and cook for 1 more minute until fragrant.",
+          "timerSeconds": 420
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Add curry powder, cumin and turmeric to the pan. Stir constantly for 30 seconds to toast the spices.",
+          "timerSeconds": 30
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Pour in crushed tomatoes and coconut milk. Add drained chickpeas and salt. Stir everything together and bring to a gentle simmer.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Simmer uncovered for 20 minutes stirring occasionally until the sauce thickens nicely.",
+          "timerSeconds": 1200
+        },
+        {
+          "stepNumber": 5,
+          "instruction": "Stir in spinach or peas and cook for 2 more minutes until wilted. Taste and adjust salt. Serve over brown rice or with flatbread.",
+          "timerSeconds": 120,
+          "kidParticipation": "[Kids can stir in the spinach!]"
+        }
+      ],
+      "coreFlavours": [
+        "mild",
+        "savoury",
+        "spiced"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "tins of chickpeas 400g each",
+        "coconut milk",
+        "crushed tomatoes",
+        "large onion",
+        "garlic cloves",
+        "fresh ginger",
+        "mild curry powder not hot",
+        "baby spinach or frozen peas"
+      ],
+      "mainVeg": [
+        "tins of chickpeas 400g each",
+        "coconut milk",
+        "crushed tomatoes",
+        "large onion",
+        "garlic cloves",
+        "fresh ginger",
+        "mild curry powder not hot",
+        "baby spinach or frozen peas"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "remove": "Hot spices; use only mild curry powder and no chilli.",
+        "presentation": "Serve over rice in a bowl. For picky eaters blend the sauce smooth before adding chickpeas.",
+        "ageNotes": "Suitable from age 5. For toddlers mash a few chickpeas. Ensure curry powder is genuinely mild."
+      },
+      "cultureCard": {
+        "countryName": "India",
+        "flagEmoji": "🇮🇳",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "mild-chickpea-curry.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    },
+    {
+      "recipeId": "turkey-meatball-ratatouille",
+      "title": "Turkey Meatball Ratatouille",
+      "titleAdapted": "Meatballs in Veggie Sauce",
+      "cuisineId": "french",
+      "source": "original",
+      "ageRange": {
+        "min": 4,
+        "max": 12
+      },
+      "prepMinutes": 40,
+      "difficulty": "medium",
+      "servings": 4,
+      "allergens": [
+        "eggs",
+        "gluten"
+      ],
+      "nutritionTags": [
+        "protein",
+        "veg"
+      ],
+      "ingredients": [
+        {
+          "name": "lean turkey mince",
+          "amount": 400,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "whole wheat breadcrumbs",
+          "amount": 30,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "egg",
+          "amount": 1,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "garlic cloves",
+          "amount": 2,
+          "unit": "piece",
+          "notes": "minced divided",
+          "isGlobal": false
+        },
+        {
+          "name": "small courgette",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "finely diced",
+          "isGlobal": false
+        },
+        {
+          "name": "small aubergine",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "diced",
+          "isGlobal": false
+        },
+        {
+          "name": "red bell pepper",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "diced",
+          "isGlobal": false
+        },
+        {
+          "name": "crushed tomatoes",
+          "amount": 400,
+          "unit": "g",
+          "notes": "1 tin",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Preheat oven to 190C (375F). Combine turkey mince, breadcrumbs, egg, half the garlic and half the salt. Mix gently and roll into walnut-sized balls. Place on a lined baking tray.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can roll the meatballs!]"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Bake meatballs for 18 to 20 minutes until cooked through and lightly golden.",
+          "timerSeconds": 1140
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Meanwhile heat olive oil in a wide pan. Saute remaining garlic for 1 minute then add courgette, aubergine and red pepper. Cook for 8 minutes until softened.",
+          "timerSeconds": 540
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Add crushed tomatoes, thyme and remaining salt. Simmer for 10 minutes until thickened.",
+          "timerSeconds": 600
+        },
+        {
+          "stepNumber": 5,
+          "instruction": "Nestle the baked meatballs into the sauce and simmer together for 5 minutes. Scatter with fresh parsley and serve.",
+          "timerSeconds": 300,
+          "kidParticipation": "[Kids can tear the parsley leaves!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "mild"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "lean turkey mince",
+        "whole wheat breadcrumbs",
+        "egg",
+        "garlic cloves",
+        "small courgette",
+        "small aubergine",
+        "red bell pepper",
+        "crushed tomatoes"
+      ],
+      "mainVeg": [
+        "lean turkey mince",
+        "whole wheat breadcrumbs",
+        "egg",
+        "garlic cloves",
+        "small courgette",
+        "small aubergine",
+        "red bell pepper",
+        "crushed tomatoes"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Serve over pasta or mashed potato. Blend the sauce smooth before adding meatballs for texture-averse children.",
+        "ageNotes": "Suitable from age 4. For toddlers cut meatballs into quarters. Blend sauce smooth."
+      },
+      "cultureCard": {
+        "countryName": "France",
+        "flagEmoji": "🇫🇷",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "turkey-meatball-ratatouille.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    },
+    {
+      "recipeId": "teriyaki-chicken-skewers",
+      "title": "Teriyaki Chicken Skewers",
+      "titleAdapted": "Sticky Chicken Sticks",
+      "cuisineId": "japanese",
+      "source": "original",
+      "ageRange": {
+        "min": 4,
+        "max": 12
+      },
+      "prepMinutes": 35,
+      "difficulty": "medium",
+      "servings": 4,
+      "allergens": [
+        "soy",
+        "sesame"
+      ],
+      "nutritionTags": [
+        "protein"
+      ],
+      "ingredients": [
+        {
+          "name": "chicken thighs boneless skinless",
+          "amount": 500,
+          "unit": "g",
+          "notes": "cut into chunks",
+          "isGlobal": false
+        },
+        {
+          "name": "low-sodium soy sauce or tamari",
+          "amount": 3,
+          "unit": "tbsp",
+          "isGlobal": true,
+          "substitution": "coconut aminos"
+        },
+        {
+          "name": "honey",
+          "amount": 2,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "rice vinegar",
+          "amount": 1,
+          "unit": "tbsp",
+          "isGlobal": true,
+          "substitution": "a few drops of lemon juice"
+        },
+        {
+          "name": "garlic clove",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "minced",
+          "isGlobal": false
+        },
+        {
+          "name": "fresh ginger",
+          "amount": 1,
+          "unit": "tsp",
+          "notes": "grated",
+          "isGlobal": false
+        },
+        {
+          "name": "sesame oil",
+          "amount": 1,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "sesame seeds",
+          "amount": 1,
+          "unit": "tbsp",
+          "notes": "to garnish",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "In a bowl mix soy sauce, honey, rice vinegar, garlic, ginger and sesame oil to make the marinade. Add chicken and toss to coat. Marinate for at least 30 minutes.",
+          "timerSeconds": 1800,
+          "kidParticipation": "[Kids can mix the marinade!]"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Thread the marinated chicken pieces onto skewers. Reserve the remaining marinade.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can help thread the pieces with supervision!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Heat a griddle pan or grill to medium-high heat. Cook skewers for 10 to 12 minutes turning every 3 to 4 minutes and brushing with reserved marinade.",
+          "timerSeconds": 720
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Transfer to a plate and sprinkle with sesame seeds and sliced spring onion. Serve with rice and steamed vegetables.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can sprinkle the sesame seeds!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "sweet",
+        "umami"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "chicken thighs boneless skinless",
+        "low-sodium soy sauce or tamari",
+        "honey",
+        "rice vinegar",
+        "garlic clove",
+        "fresh ginger",
+        "sesame oil",
+        "sesame seeds"
+      ],
+      "mainVeg": [],
+      "substitutions": {
+        "low-sodium soy sauce or tamari": "coconut aminos",
+        "rice vinegar": "a few drops of lemon juice"
+      },
+      "kidAdaptation": {
+        "remove": "Hot grill; adult only.",
+        "presentation": "Slide the chicken off the skewers for young children before serving. Serve over rice with edamame alongside.",
+        "ageNotes": "Suitable from age 4. Remove from skewers before serving to under-5s. Soak wooden skewers in water 30 minutes before use."
+      },
+      "cultureCard": {
+        "countryName": "Japan",
+        "flagEmoji": "🇯🇵",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "teriyaki-chicken-skewers.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    },
+    {
+      "recipeId": "stuffed-mini-bell-peppers",
+      "title": "Veggie-Stuffed Mini Bell Peppers",
+      "titleAdapted": "Pepper Bowls",
+      "cuisineId": "mexican",
+      "source": "original",
+      "ageRange": {
+        "min": 5,
+        "max": 12
+      },
+      "prepMinutes": 30,
+      "difficulty": "medium",
+      "servings": 4,
+      "allergens": [
+        "dairy"
+      ],
+      "nutritionTags": [
+        "veg",
+        "carbs",
+        "protein"
+      ],
+      "ingredients": [
+        {
+          "name": "mini sweet bell peppers or 4 regular halved",
+          "amount": 8,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "cooked brown rice",
+          "amount": 200,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "tinned black beans or kidney beans",
+          "amount": 120,
+          "unit": "g",
+          "notes": "drained",
+          "isGlobal": false
+        },
+        {
+          "name": "tinned sweetcorn",
+          "amount": 100,
+          "unit": "g",
+          "notes": "drained",
+          "isGlobal": false
+        },
+        {
+          "name": "grated cheddar",
+          "amount": 60,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "mild cumin",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "mild paprika",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "cherry tomatoes",
+          "amount": 4,
+          "unit": "piece",
+          "notes": "finely diced",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Preheat oven to 190C (375F). Slice the tops off mini peppers and remove seeds. Stand them upright in a baking dish.",
+          "timerSeconds": 600
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "In a bowl mix cooked rice, black beans, sweetcorn, diced cherry tomatoes, cumin, paprika and salt. Taste and adjust seasoning.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can mix all the filling together!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Spoon the filling firmly into each pepper mounding it slightly. Top each with a pinch of cheddar.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can spoon in the filling!]"
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Bake for 20 to 25 minutes until the peppers are tender and cheese is golden and bubbling.",
+          "timerSeconds": 1350
+        },
+        {
+          "stepNumber": 5,
+          "instruction": "Scatter with fresh coriander or parsley and serve warm.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can tear the herb leaves!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "mild",
+        "sweet"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "mini sweet bell peppers or 4 regular halved",
+        "cooked brown rice",
+        "tinned black beans or kidney beans",
+        "tinned sweetcorn",
+        "grated cheddar",
+        "mild cumin",
+        "mild paprika",
+        "cherry tomatoes"
+      ],
+      "mainVeg": [
+        "mini sweet bell peppers or 4 regular halved",
+        "cooked brown rice",
+        "tinned black beans or kidney beans",
+        "tinned sweetcorn",
+        "grated cheddar",
+        "mild cumin",
+        "mild paprika",
+        "cherry tomatoes"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Stand the peppers in a muffin tin to keep them upright during baking if they wobble. Serve with plain yogurt for dipping.",
+        "ageNotes": "Suitable from age 5. For younger children cut into smaller pieces after baking."
+      },
+      "cultureCard": {
+        "countryName": "Mexico",
+        "flagEmoji": "🇲🇽",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "stuffed-mini-bell-peppers.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    },
+    {
+      "recipeId": "apple-nachos",
+      "title": "Apple Nachos with Nut Butter",
+      "titleAdapted": "Apple Nachos",
+      "cuisineId": "french",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 10,
+      "difficulty": "easy",
+      "servings": 4,
+      "allergens": [
+        "nuts"
+      ],
+      "nutritionTags": [
+        "fruit"
+      ],
+      "ingredients": [
+        {
+          "name": "medium apples any variety",
+          "amount": 3,
+          "unit": "piece",
+          "notes": "cored and thinly sliced",
+          "isGlobal": false
+        },
+        {
+          "name": "almond butter or sunflower seed butter",
+          "amount": 4,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "raisins or chopped dried cranberries",
+          "amount": 2,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "granola or chopped nuts",
+          "amount": 2,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "honey drizzle",
+          "amount": 1,
+          "unit": "tsp",
+          "notes": "optional",
+          "isGlobal": false
+        },
+        {
+          "name": "ground cinnamon",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Arrange the apple slices in a circular overlapping pattern on a large plate or board like nachos.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can arrange all the slices!]"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Warm almond butter very slightly to make it drizzleable. Drizzle generously over all the apple slices.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can drizzle the nut butter!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Scatter raisins and granola over the top. Dust with cinnamon and add the optional honey drizzle. Serve immediately.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can add all the toppings!]"
+        }
+      ],
+      "coreFlavours": [
+        "sweet",
+        "fresh"
+      ],
+      "textures": [],
+      "mainProteins": [],
+      "mainVeg": [],
+      "substitutions": {},
+      "kidAdaptation": {
+        "substitute": "Use sunflower seed butter for nut-free settings.",
+        "presentation": "Lay the apple slices flat like nachos on a board and let kids build their own. The nacho format makes fruit exciting.",
+        "ageNotes": "Suitable from age 3. Use sunflower seed butter in nut-free environments. For under-3s check apple slice thickness."
+      },
+      "cultureCard": {
+        "countryName": "France",
+        "flagEmoji": "🇫🇷",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "apple-nachos.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    },
+    {
+      "recipeId": "frozen-yogurt-bark",
+      "title": "Frozen Yogurt Bark",
+      "titleAdapted": "Yogurt Bark Brittle",
+      "cuisineId": "french",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 15,
+      "difficulty": "easy",
+      "servings": 6,
+      "allergens": [
+        "dairy"
+      ],
+      "nutritionTags": [
+        "dairy",
+        "fruit"
+      ],
+      "ingredients": [
+        {
+          "name": "plain Greek yogurt",
+          "amount": 400,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "honey or maple syrup",
+          "amount": 2,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "vanilla extract",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "fresh strawberries",
+          "amount": 80,
+          "unit": "g",
+          "notes": "thinly sliced",
+          "isGlobal": false
+        },
+        {
+          "name": "fresh blueberries",
+          "amount": 50,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "granola or puffed rice cereal",
+          "amount": 30,
+          "unit": "g",
+          "isGlobal": false
+        },
+        {
+          "name": "passion fruit or kiwi",
+          "amount": 1,
+          "unit": "piece",
+          "notes": "scooped optional",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Line a baking tray or sheet pan with parchment paper. In a bowl mix Greek yogurt, honey and vanilla until smooth.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can mix the yogurt!]"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Pour the yogurt mixture onto the parchment and spread it into an even rectangle about 1cm thick.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can help spread the yogurt!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Scatter strawberries, blueberries, granola and passion fruit evenly across the surface. Gently press the fruit down slightly.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can arrange all the fruit!]"
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Transfer the tray to the freezer and freeze for at least 4 hours until completely solid.",
+          "timerSeconds": 14400
+        },
+        {
+          "stepNumber": 5,
+          "instruction": "Remove from freezer, lift off parchment and snap or break into rough pieces. Serve immediately.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can help snap the bark!]"
+        }
+      ],
+      "coreFlavours": [
+        "sweet",
+        "fresh"
+      ],
+      "textures": [],
+      "mainProteins": [],
+      "mainVeg": [],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Place on a wooden board and let kids snap their own pieces. Store in a zip-lock bag in the freezer for up to 2 weeks.",
+        "ageNotes": "Suitable from age 3. Serve immediately from frozen — it melts quickly. Supervise young children with frozen foods."
+      },
+      "cultureCard": {
+        "countryName": "France",
+        "flagEmoji": "🇫🇷",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "frozen-yogurt-bark.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    },
+    {
+      "recipeId": "ants-on-a-log",
+      "title": "Ants on a Log",
+      "titleAdapted": "Ants on a Log",
+      "cuisineId": "french",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 10,
+      "difficulty": "easy",
+      "servings": 4,
+      "allergens": [
+        "nuts"
+      ],
+      "nutritionTags": [
+        "veg"
+      ],
+      "ingredients": [
+        {
+          "name": "celery stalks",
+          "amount": 8,
+          "unit": "piece",
+          "notes": "washed and trimmed",
+          "isGlobal": false
+        },
+        {
+          "name": "peanut butter or sunflower seed butter",
+          "amount": 8,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "raisins",
+          "amount": 4,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "ground cinnamon",
+          "amount": 1,
+          "unit": "pinch",
+          "notes": "optional",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Cut each celery stalk into 3 equal pieces. If stalks are very curved slice a thin strip off the underside so they sit flat.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Spoon nut butter into the channel of each celery piece filling it generously.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can spoon in the nut butter!]"
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Press raisins into the nut butter in a line — the ants on the log. Add a dusting of cinnamon if using. Arrange on a plate and serve.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can press in all the raisins!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "fresh"
+      ],
+      "textures": [],
+      "mainProteins": [],
+      "mainVeg": [
+        "celery stalks",
+        "peanut butter or sunflower seed butter",
+        "raisins",
+        "ground cinnamon"
+      ],
+      "substitutions": {},
+      "kidAdaptation": {
+        "substitute": "Use sunflower seed butter for nut-free settings.",
+        "presentation": "Serve on a long plate or board arranged in rows. Name the raisins as the ants — kids love the storytelling element.",
+        "ageNotes": "Suitable from age 3. Use sunflower seed butter in nut-free environments. For under-3s check raisin size — choking risk."
+      },
+      "cultureCard": {
+        "countryName": "France",
+        "flagEmoji": "🇫🇷",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "ants-on-a-log.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    },
+    {
+      "recipeId": "homemade-hummus",
+      "title": "Homemade Hummus with Rainbow Dippers",
+      "titleAdapted": "Rainbow Dip",
+      "cuisineId": "lebanese",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 15,
+      "difficulty": "easy",
+      "servings": 6,
+      "allergens": [
+        "sesame"
+      ],
+      "nutritionTags": [
+        "protein",
+        "veg"
+      ],
+      "ingredients": [
+        {
+          "name": "tinned chickpeas",
+          "amount": 400,
+          "unit": "g",
+          "notes": "drained liquid reserved",
+          "isGlobal": false
+        },
+        {
+          "name": "tahini sesame paste",
+          "amount": 3,
+          "unit": "tbsp",
+          "isGlobal": true,
+          "substitution": "skip and add extra olive oil"
+        },
+        {
+          "name": "lemon juice",
+          "amount": 2,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "garlic clove small",
+          "amount": 1,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "olive oil",
+          "amount": 2,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "salt",
+          "amount": 0.5,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "ice-cold water or reserved chickpea liquid",
+          "amount": 3,
+          "unit": "tbsp",
+          "isGlobal": false
+        },
+        {
+          "name": "carrot sticks cucumber celery pita strips peppers",
+          "amount": 1,
+          "unit": "cup",
+          "notes": "to serve",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "Add tahini and lemon juice to a food processor. Process for 1 minute until pale and whipped. Add garlic, olive oil, salt and cumin. Process for another 30 seconds.",
+          "timerSeconds": 0
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Add drained chickpeas to the processor. Process for 2 minutes adding cold water tablespoon by tablespoon until the hummus is silky smooth. Taste and adjust seasoning.",
+          "timerSeconds": 120
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Spoon into a wide bowl. Use the back of a spoon to create a swirl. Drizzle with extra olive oil and dust with a pinch of paprika.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can swirl the top with a spoon!]"
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Serve with the selection of vegetable dippers and pita strips arranged in a rainbow pattern.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can arrange all the dippers!]"
+        }
+      ],
+      "coreFlavours": [
+        "savoury",
+        "mild",
+        "fresh"
+      ],
+      "textures": [],
+      "mainProteins": [
+        "tinned chickpeas",
+        "tahini sesame paste",
+        "lemon juice",
+        "garlic clove small",
+        "olive oil",
+        "salt",
+        "ice-cold water or reserved chickpea liquid",
+        "carrot sticks cucumber celery pita strips peppers"
+      ],
+      "mainVeg": [
+        "tinned chickpeas",
+        "tahini sesame paste",
+        "lemon juice",
+        "garlic clove small",
+        "olive oil",
+        "salt",
+        "ice-cold water or reserved chickpea liquid",
+        "carrot sticks cucumber celery pita strips peppers"
+      ],
+      "substitutions": {
+        "tahini sesame paste": "skip and add extra olive oil"
+      },
+      "kidAdaptation": {
+        "presentation": "Arrange dippers in a rainbow arc around the bowl. The visual presentation makes children far more willing to try new vegetables.",
+        "ageNotes": "Suitable from age 3. For toddlers under 2 skip the garlic. Store hummus in the fridge for up to 5 days."
+      },
+      "cultureCard": {
+        "countryName": "Lebanon",
+        "flagEmoji": "🇱🇧",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "homemade-hummus.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    },
+    {
+      "recipeId": "banana-nice-cream",
+      "title": "Banana Nice Cream",
+      "titleAdapted": "Banana Ice Cream",
+      "cuisineId": "west-african",
+      "source": "original",
+      "ageRange": {
+        "min": 3,
+        "max": 12
+      },
+      "prepMinutes": 10,
+      "difficulty": "easy",
+      "servings": 4,
+      "allergens": [],
+      "nutritionTags": [
+        "fruit"
+      ],
+      "ingredients": [
+        {
+          "name": "ripe bananas peeled sliced and frozen overnight",
+          "amount": 4,
+          "unit": "piece",
+          "isGlobal": false
+        },
+        {
+          "name": "vanilla extract",
+          "amount": 1,
+          "unit": "tsp",
+          "isGlobal": false
+        },
+        {
+          "name": "milk or plant milk",
+          "amount": 2,
+          "unit": "tbsp",
+          "notes": "if needed",
+          "isGlobal": false
+        },
+        {
+          "name": "toppings of choice fresh fruit dark chocolate chips honey",
+          "amount": 1,
+          "unit": "cup",
+          "notes": "to serve",
+          "isGlobal": false
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instruction": "The night before peel bananas, slice into rounds and spread on a tray. Freeze until solid — at least 4 hours.",
+          "timerSeconds": 14400,
+          "kidParticipation": "[Kids can peel and slice the bananas!]"
+        },
+        {
+          "stepNumber": 2,
+          "instruction": "Add the frozen banana pieces to a blender or food processor with vanilla. Blend stopping to scrape down the sides. Add milk one tablespoon at a time only if needed. Blend until perfectly smooth and creamy.",
+          "timerSeconds": 180
+        },
+        {
+          "stepNumber": 3,
+          "instruction": "Scoop immediately for a soft-serve consistency or transfer to a container and freeze for 30 more minutes for a firmer scoop.",
+          "timerSeconds": 1800
+        },
+        {
+          "stepNumber": 4,
+          "instruction": "Top with fresh fruit, chocolate chips or crushed nuts and serve.",
+          "timerSeconds": 0,
+          "kidParticipation": "[Kids can choose and add their own toppings!]"
+        }
+      ],
+      "coreFlavours": [
+        "sweet",
+        "mild"
+      ],
+      "textures": [],
+      "mainProteins": [],
+      "mainVeg": [],
+      "substitutions": {},
+      "kidAdaptation": {
+        "presentation": "Serve in a waffle cone or fun bowl. Let kids pick their own toppings from a selection — ownership makes them eat it happily.",
+        "ageNotes": "Suitable from age 3. Flavour variations: add 1 tbsp cocoa powder for chocolate, frozen mango for tropical, or peanut butter for a swirl."
+      },
+      "cultureCard": {
+        "countryName": "West Africa",
+        "flagEmoji": "🌍",
+        "facts": {
+          "age2to4": "",
+          "age5to8": "",
+          "age9to12": ""
+        }
+      },
+      "imageFilename": "banana-nice-cream.jpg",
+      "launchWave": 1,
+      "createdAt": 1785704581296,
+      "updatedAt": 1785704581296
+    }
+  ]
+}

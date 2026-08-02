@@ -1,33 +1,24 @@
 // S11 — Adventure Mode
 // Figma: P01-S11 | Auth required: Yes
-import { useState, useEffect } from 'react'
+
 import { ScrollView, View, Text, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { colors, spacing, radius, typography } from '@/constants/tokens'
 import { useCharacter } from '@/hooks/useCharacter'
-import { getRecipesByCuisine } from '@/services/recipes'
+import { getRecipesByCuisine } from '@/data/recipes'
 import { Recipe } from '@/types/recipe'
 import { AdventureHeroBar } from '@/components/recipe/AdventureHeroBar'
 import { CultureCard } from '@/components/recipe/CultureCard'
 import { RecipeTeaser } from '@/components/recipe/RecipeTeaser'
-import { CharacterOutfitTeaser } from '@/components/character/CharacterOutfitTeaser'
 import { PrimaryButton } from '@/components/ui/PrimaryButton'
 
 export default function AdventureModeScreen() {
   const { cuisine } = useLocalSearchParams<{ cuisine: string }>()
   const router = useRouter()
   const { activePair } = useCharacter()
-  const [recipes, setRecipes] = useState<Recipe[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (!cuisine) return
-    setLoading(true)
-    getRecipesByCuisine(cuisine)
-      .then(setRecipes)
-      .finally(() => setLoading(false))
-  }, [cuisine])
+  const recipes = cuisine ? getRecipesByCuisine(cuisine) : []
+  const loading = false
 
   const ageGroup = 5
 
@@ -71,12 +62,6 @@ export default function AdventureModeScreen() {
         {loading && (
           <Text style={styles.loadingText}>Finding the perfect recipe...</Text>
         )}
-
-        {/* ── Character Outfit Teaser ── */}
-        <CharacterOutfitTeaser
-          pairId={activePair.id}
-          cuisineId={cuisine ?? ''}
-        />
 
         {/* ── Not ready note ── */}
         <View style={styles.note}>

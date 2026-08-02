@@ -7,7 +7,7 @@ import { CharacterPairId, CuisineId } from '@/types/character'
 // ---------------------------------------------------------------------------
 // PlaceholderImage — stand-in for all five asset types while real artwork is
 // pending.  To swap in real assets later, replace <PlaceholderImage> with
-// <FastImage> using the same dimensions and the equivalent asset path.
+// <Image> from expo-image using the same dimensions and asset path.
 // ---------------------------------------------------------------------------
 
 type PlaceholderType =

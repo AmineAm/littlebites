@@ -3,6 +3,8 @@ import { colors, spacing, radius, typography } from '@/constants/tokens'
 import { SubstitutionNote } from './SubstitutionNote'
 
 export interface ShoppingItemData {
+  /** Stable identity — name alone collides when units differ (1 onion vs 100g onion). */
+  id?: string
   name: string
   amount: string
   category: string

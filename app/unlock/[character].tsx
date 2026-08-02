@@ -53,7 +53,7 @@ export default function UnlockScreen() {
 
   function handleMeet() {
     setActivePairId(pair.id)
-    router.replace('/(tabs)/' as any)
+    router.replace('/(tabs)')
   }
 
   return (

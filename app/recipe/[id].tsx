@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { colors, spacing, radius, typography } from '@/constants/tokens'
 import { useCharacter } from '@/hooks/useCharacter'
-import { getRecipe } from '@/services/recipes'
+import { getRecipe } from '@/data/recipes'
 import { Recipe } from '@/types/recipe'
 import { RecipeHeroImage } from '@/components/recipe/RecipeHeroImage'
 import { InfoChip } from '@/components/ui/InfoChip'
@@ -20,18 +20,10 @@ export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const { activePair } = useCharacter()
-  const [recipe, setRecipe] = useState<Recipe | null>(null)
-  const [loading, setLoading] = useState(true)
+  // Bundled data — synchronous, so there is no loading state to render.
+  const recipe = id ? getRecipe(id) : null
 
-  useEffect(() => {
-    if (!id) return
-    setLoading(true)
-    getRecipe(id)
-      .then(setRecipe)
-      .finally(() => setLoading(false))
-  }, [id])
-
-  if (loading) {
+  if (!recipe) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
