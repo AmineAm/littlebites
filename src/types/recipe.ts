@@ -5,11 +5,12 @@ export type NutritionTag = 'protein' | 'veg' | 'carbs' | 'dairy' | 'fruit'
 export type Difficulty = 'easy' | 'medium' | 'hard'
 
 export interface Ingredient {
-  name:     string
-  amount:   number
-  unit:     'g' | 'ml' | 'tbsp' | 'tsp' | 'cup' | 'piece' | 'bunch'
-  notes:    string | undefined
-  isGlobal: boolean
+  name:         string
+  amount:       number
+  unit:         'g' | 'ml' | 'tbsp' | 'tsp' | 'cup' | 'piece' | 'bunch'
+  notes:        string | undefined
+  isGlobal:     boolean
+  substitution: string | undefined
 }
 
 export interface RecipeStep {
@@ -32,7 +33,9 @@ export interface CultureCard {
 export interface Recipe {
   recipeId:      string
   title:         string
+  titleAdapted?: string
   cuisineId:     string
+  source?:        'original' | 'adapted'
   ageRange:      { min: number; max: number }
   prepMinutes:   number
   difficulty:    Difficulty
@@ -41,12 +44,19 @@ export interface Recipe {
   nutritionTags: NutritionTag[]
   ingredients:   Ingredient[]
   steps:         RecipeStep[]
-  cultureCard:   CultureCard
+  cultureCard?:  CultureCard
   coreFlavours:  string[]
   textures:      string[]
   mainProteins:  string[]
   mainVeg:       string[]
   substitutions: Record<string, string>
+  kidAdaptation?: {
+    remove?:       string
+    substitute?:   string
+    presentation?: string
+    ageNotes?:     string
+  }
+  imageFilename?: string
   launchWave:    1 | 2 | 3
   createdAt:     Timestamp
   updatedAt:     Timestamp

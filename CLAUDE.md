@@ -335,3 +335,22 @@ cuisines/{cuisineId}
 - No calorie data stored or displayed anywhere
 - Shopping list substitution suggestions are stored in Firestore with the recipe — not computed client-side
 - Passport stamp unlock is server-validated via Cloud Function — not client-side only
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues on `AmineAm/littlebites`, managed with the `gh` CLI.
+See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical vocabulary — `needs-triage`, `needs-info`, `ready-for-agent`,
+`ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — `CONTEXT.md` and `docs/adr/` at the repo root.
+See `docs/agents/domain.md`.

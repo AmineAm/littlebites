@@ -69,7 +69,7 @@ export default function TasteQuizScreen() {
         updatedAt:          serverTimestamp(),
       })
 
-      router.replace('/(tabs)/')
+      router.replace('/(tabs)/' as any)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Could not save. Please try again.'
       Alert.alert('Error', msg)

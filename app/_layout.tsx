@@ -53,15 +53,15 @@ export default function RootLayout() {
 
     const inAuthGroup = segments[0] === '(auth)'
 
-    if (!user) {
+      if (!user) {
       // Not signed in — always send to splash
-      if (!inAuthGroup) router.replace('/(auth)/')
+      if (!inAuthGroup) router.replace('/(auth)/' as any)
     } else if (!user.onboardingComplete) {
       // Signed in but onboarding not done
       router.replace('/(auth)/profile')
     } else {
       // Fully onboarded
-      if (inAuthGroup) router.replace('/(tabs)/')
+      if (inAuthGroup) router.replace('/(tabs)/' as any)
     }
   }, [user, isLoading])
 

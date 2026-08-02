@@ -42,3 +42,9 @@ yarn-error.*
 /ios
 /android
 expo-output.log
+
+# Firebase admin credential — NEVER commit
+service-account.json
+
+# Other AI tool working dirs
+.mimocode/

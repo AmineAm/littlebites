@@ -151,14 +151,120 @@ Current task: [describe task]
 
 ---
 
-## Session log (update this as the project progresses)
+## Current status (2026-06-08)
+
+### Done
+
+| Screen | File | Status |
+|--------|------|--------|
+| S1 Splash & Sign Up | `app/(auth)/index.tsx` | ✅ Built (ScrollView + keyboard fix applied) |
+| S2 + S4 Profile + Adventure | `app/(auth)/profile.tsx` | ✅ Merged into single screen |
+| S3 Taste Quiz | `app/(auth)/taste-quiz.tsx` | ✅ Built, skippable |
+| S5 Home Dashboard | `app/(tabs)/index.tsx` | 🔧 In progress (uncommitted, ~476 lines) |
+
+| Infrastructure | File | Status |
+|----------------|------|--------|
+| Design tokens | `src/constants/tokens.ts` | ✅ |
+| Cuisine definitions | `src/constants/cuisines.ts` | ✅ |
+| Character definitions | `src/constants/characters.ts` | ✅ |
+| Route constants | `src/constants/routes.ts` | ✅ |
+| App layout / auth routing | `app/_layout.tsx` | ✅ |
+| Firebase init | `src/services/firebase.ts` | ✅ |
+| Auth service | `src/services/auth.ts` | ✅ |
+| Firestore rules + indexes | `firestore.rules` + `firestore.indexes.json` | ✅ |
+| Type definitions | `src/types/*.ts` (5 files) | ✅ |
+
+| UI Components | File | Status |
+|---------------|------|--------|
+| PrimaryButton | `src/components/ui/PrimaryButton.tsx` | ✅ |
+| GhostButton | `src/components/ui/GhostButton.tsx` | ✅ |
+| SocialLoginButton | `src/components/ui/SocialLoginButton.tsx` | ✅ |
+| ProgressDots | `src/components/ui/ProgressDots.tsx` | ✅ |
+| AllergyChip | `src/components/ui/AllergyChip.tsx` | ✅ |
+| Toggle | `src/components/ui/Toggle.tsx` | ✅ |
+| PlaceholderImage | `src/components/ui/PlaceholderImage.tsx` | ✅ |
+| CharacterPickerCard | `src/components/character/CharacterPickerCard.tsx` | ✅ |
+| ChildCard | `src/components/profile/ChildCard.tsx` | ✅ |
+| AddChildField | `src/components/profile/AddChildField.tsx` | ✅ |
+| AdventureLevelSelector | `src/components/profile/AdventureLevelSelector.tsx` | ✅ |
+| CuisinePickerChip | `src/components/profile/CuisinePickerChip.tsx` | ✅ |
+
+### Not started
+
+| Area | What's needed |
+|------|---------------|
+| S6 Meal Planner | `app/(tabs)/plan.tsx` |
+| S7 Recipe Detail | `app/recipe/[id].tsx` |
+| S8 Shopping List | `app/(tabs)/shop.tsx` |
+| S9 Guided Prep | `app/cook/[id].tsx` |
+| S10 Passport & Rewards | `app/(tabs)/explore.tsx` |
+| S11 Adventure Mode | `app/adventure/[cuisine].tsx` |
+| Stores | `auth.store.ts`, `planner.store.ts`, `character.store.ts`, `preferences.store.ts` |
+| Services | `recipes.ts`, `planner.ts`, `unlock.ts` |
+| Hooks | `useReducedMotion.ts`, `useCharacter.ts`, `useUnlock.ts`, `useMealPlan.ts` |
+| Utils | `nutrition.ts`, `preference.ts`, `date.ts` |
+| Recipe/cuisine/cooking UI components | ~25 components listed in SCREENS.md |
+
+---
+
+## Next steps (priority order)
+
+### 1. Finish S5 Home Dashboard
+The home screen is the anchor — everything else orbits it. The diff is already ~476 lines.
+Complete the remaining sections (character hero, stat cards, unlock progress, adventure teaser),
+wire up Firebase listeners, and commit.
+
+### 2. Build the Zustand stores
+Before building more screens, put the state layer in place:
+- `auth.store.ts` — user + child profile state
+- `character.store.ts` — active character pair + unlock tracking
+- `preferences.store.ts` — child food preferences
+- `planner.store.ts` — current week meal plan
+
+These are the data backbone for S5–S11.
+
+### 3. Build the hooks
+- `useReducedMotion.ts` — accessibility gate (needed by every animated component)
+- `useCharacter.ts` — wraps `character.store` for screen-level consumption
+- `useMealPlan.ts` — wraps `planner.store` + Firestore sync
+- `useUnlock.ts` — milestone tracking + unlock trigger detection
+
+### 4. Build remaining screens in order: S6 → S7 → S8 → S9 → S10 → S11
+Each screen lists its required sub-components in `docs/SCREENS.md`. Build the sub-components
+first, then assemble the screen. PlaceholderImage is available for all asset spots — no artwork blocker.
+
+### 5. Firebase service layer
+- `recipes.ts` — Firestore reads for recipe data
+- `planner.ts` — meal plan CRUD
+- `unlock.ts` — milestone tracking + Cloud Function trigger
+
+### 6. Utility functions
+- `preference.ts` — the preference matching algorithm (high-complexity, Claude Code only)
+- `nutrition.ts` — food group tag helpers
+- `date.ts` — week calculation helpers
+
+### 7. Custom TabBar
+The bottom nav component in `src/navigation/TabBar.tsx` — character face icon on the active tab.
+
+---
+
+## Session log
 
 Keep a brief log of which AI produced which files.
 This helps when debugging — you know whose output to inspect.
 
 | Date | File | AI | Notes |
 |------|------|----|-------|
-| — | `src/constants/tokens.ts` | Claude Code | Design token file — do not edit without full review |
-| — | `app/(auth)/index.tsx` | — | Not yet started |
-| — | `app/(tabs)/index.tsx` | — | Not yet started |
-| — | `src/store/character.store.ts` | — | Not yet started |
+| 2026-06 | `src/constants/tokens.ts` | Claude Code | Design token file — do not edit without full review |
+| 2026-06 | `src/constants/cuisines.ts` | Claude Code | 14 cuisines with accent colours |
+| 2026-06 | `src/constants/characters.ts` | Claude Code | 4 character pairs with unlock milestones |
+| 2026-06 | `app/(auth)/index.tsx` | Claude Code | S1 Splash & Sign Up |
+| 2026-06 | `app/(auth)/profile.tsx` | Claude Code | S2+S4 merged — child profile + adventure |
+| 2026-06 | `app/(auth)/taste-quiz.tsx` | Claude Code | S3 Taste quiz — skippable |
+| 2026-06 | `app/_layout.tsx` | Claude Code | Auth gate routing |
+| 2026-06 | `app/(tabs)/index.tsx` | Claude Code | S5 Home dashboard — in progress |
+| 2026-06 | `src/types/*.ts` (5 files) | Claude Code | Recipe, child, character, planner, passport |
+| 2026-06 | `src/services/firebase.ts` | Claude Code | Firebase init |
+| 2026-06 | `src/services/auth.ts` | Claude Code | Auth service |
+| 2026-06 | `src/components/ui/PlaceholderImage.tsx` | Claude Code | All 5 asset type placeholders |
+| 2026-06 | All other UI/profile components | Claude Code | Buttons, chips, cards, selectors |
